@@ -1,0 +1,41 @@
+{{ define "site::header" }}<!doctype html>
+<html lang="{{ .lang }}" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ .csrf }}">
+  <title>{{ if .title }}{{ .title }} · {{ end }}{{ .appName }}</title>
+  <link rel="stylesheet" href="/public/css/app.css">
+  <script>
+    // Dark mode follows the saved choice, else the system setting (before paint, so there is no flash).
+    try { if (localStorage.theme === "dark" || (!localStorage.theme && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("dark"); } catch (e) {}
+  </script>
+</head>
+<body class="flex min-h-full flex-col bg-brand-cloud text-slate-800 dark:bg-page-dark dark:text-slate-200 {{ if eq .lang "bn" }}font-bangla{{ else }}font-latin{{ end }}">
+<header class="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+  <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+    <a href="/" class="text-lg font-bold text-brand-navy dark:text-white" data-testid="site-home-link">{{ .appName }}</a>
+    <div class="flex flex-wrap items-center gap-4 text-sm">
+      <a href="/pages/about" class="hover:text-brand-amber">{{ t .lang "site-layout.nav-about" }}</a>
+      {{ if .user }}
+        <a href="/account/profile" class="hover:text-brand-amber" data-testid="nav-account">{{ .user.Name }}</a>
+        {{ if .canAdmin }}<a href="/admin" class="hover:text-brand-amber" data-testid="nav-admin">{{ t .lang "site-layout.nav-admin" }}</a>{{ end }}
+        <form method="post" action="/logout" class="inline">
+          <input type="hidden" name="_token" value="{{ .csrf }}">
+          <button class="hover:text-brand-coral" data-testid="nav-logout">{{ t .lang "site-layout.nav-logout" }}</button>
+        </form>
+      {{ else }}
+        <a href="/login" class="hover:text-brand-amber" data-testid="nav-login">{{ t .lang "site-layout.nav-login" }}</a>
+        <a href="/register" class="rounded bg-brand-navy px-3 py-1.5 text-white hover:bg-brand-amber" data-testid="nav-register">{{ t .lang "site-layout.nav-register" }}</a>
+      {{ end }}
+      <span class="flex gap-1" data-testid="language-switch">
+        {{ $lang := .lang }}{{ $path := .path }}
+        {{ range .locales }}<a href="/language/{{ . }}?next={{ $path }}" class="rounded px-2 py-0.5 {{ if eq . $lang }}bg-brand-amber text-white{{ else }}hover:bg-slate-100 dark:hover:bg-slate-800{{ end }}">{{ upper . }}</a>{{ end }}
+      </span>
+      <button type="button" onclick="document.documentElement.classList.toggle('dark'); try { localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light' } catch (e) {}" class="rounded px-2 py-0.5 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="{{ t .lang "site-layout.toggle-theme" }}">◐</button>
+    </div>
+  </nav>
+</header>
+<main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+{{ if .status }}<div class="mb-6 rounded border border-emerald-300 bg-emerald-50 px-4 py-3 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200" data-testid="status">{{ .status }}</div>{{ end }}
+{{ end }}

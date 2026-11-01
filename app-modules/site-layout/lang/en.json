@@ -1,0 +1,15 @@
+{
+  "nav-about": "About",
+  "nav-admin": "Admin",
+  "nav-login": "Log in",
+  "nav-register": "Register",
+  "nav-logout": "Log out",
+  "toggle-theme": "Switch light and dark",
+  "footer-privacy": "Privacy policy",
+  "footer-terms": "Terms of service",
+  "home-title": "Welcome",
+  "home-body": "A Laravel-style starter for Go: accounts, roles, an admin area, files, mail, PDFs and AI, ready to build on.",
+  "back-home": "Back to the home page",
+  "not-found": "Page not found",
+  "forbidden": "You do not have permission to see this page"
+}

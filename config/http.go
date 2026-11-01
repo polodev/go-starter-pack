@@ -3,7 +3,9 @@ package config
 import (
 	"github.com/goravel/framework/contracts/route"
 	ginfacades "github.com/goravel/gin/facades"
+
 	"goravel/app/facades"
+	"goravel/app/web"
 )
 
 func init() {
@@ -18,6 +20,8 @@ func init() {
 				"route": func() (route.Route, error) {
 					return ginfacades.Route("gin"), nil
 				},
+				// Templates from resources/views and every module, with the site's helpers ({{ t .lang "key" }}).
+				"template": web.Renderer(),
 			},
 		},
 		// HTTP URL
@@ -25,7 +29,7 @@ func init() {
 		// HTTP Host
 		"host": config.Env("APP_HOST", "127.0.0.1"),
 		// HTTP Port
-		"port": config.Env("APP_PORT", "3000"),
+		"port": config.Env("APP_PORT", "3200"),
 		// HTTP Timeout, default is 3 seconds
 		"request_timeout": 3,
 		// HTTPS Configuration
@@ -33,7 +37,7 @@ func init() {
 			// HTTPS Host
 			"host": config.Env("APP_HOST", "127.0.0.1"),
 			// HTTPS Port
-			"port": config.Env("APP_PORT", "3000"),
+			"port": config.Env("APP_PORT", "3200"),
 			// SSL Certificate, you can put the certificate in /public folder
 			"ssl": map[string]any{
 				// ca.pem

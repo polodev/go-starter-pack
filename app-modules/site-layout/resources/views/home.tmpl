@@ -1,0 +1,6 @@
+{{ define "site::home" }}{{ template "site::header" . }}
+<section class="rounded-xl bg-white p-8 shadow-sm dark:bg-slate-900">
+  <h1 class="text-3xl font-bold text-brand-navy dark:text-white" data-testid="home-title">{{ t .lang "site-layout.home-title" }}</h1>
+  <p class="mt-3 max-w-2xl text-slate-600 dark:text-slate-400">{{ t .lang "site-layout.home-body" }}</p>
+</section>
+{{ template "site::footer" . }}{{ end }}

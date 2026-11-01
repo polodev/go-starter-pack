@@ -1,18 +1,10 @@
 package routes
 
 import (
-	"github.com/goravel/framework/contracts/http"
-	"github.com/goravel/framework/support"
-
 	"goravel/app/facades"
 )
 
+// Web holds app-wide web routes; pages live in their modules (app-modules/*/module.go).
 func Web() {
-	facades.Route().Get("/", func(ctx http.Context) http.Response {
-		return ctx.Response().View().Make("welcome.tmpl", map[string]any{
-			"version": support.Version,
-		})
-	})
-
 	facades.Route().Static("public", "./public")
 }

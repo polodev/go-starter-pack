@@ -1,0 +1,8 @@
+{{ define "site::footer" }}</main>
+<footer class="border-t border-slate-200 py-6 text-center text-sm text-slate-500 dark:border-slate-800">
+  <a href="/pages/privacy-policy" class="hover:text-brand-amber">{{ t .lang "site-layout.footer-privacy" }}</a> ·
+  <a href="/pages/terms-of-service" class="hover:text-brand-amber">{{ t .lang "site-layout.footer-terms" }}</a> ·
+  <span>{{ .appName }}</span>
+</footer>
+</body>
+</html>{{ end }}

@@ -9,3 +9,6 @@
 
 # compiled binary
 /go-starter-pack
+
+# Tailwind standalone CLI (download: https://github.com/tailwindlabs/tailwindcss/releases, v3.4)
+/tools

@@ -4,6 +4,7 @@ import (
 	"github.com/goravel/framework/support/carbon"
 
 	"goravel/app/facades"
+	"goravel/app/modular"
 )
 
 // Boot Start all init methods of the current folder to bootstrap all config.
@@ -49,6 +50,9 @@ func init() {
 		// is not available. You may change the value to correspond to any of
 		// the language folders that are provided through your application.
 		"fallback_locale": "en",
+
+		// Translations: lang/ plus every module's lang/<locale>.json, read through Goravel's translator.
+		"lang_fs": modular.LangFS{},
 
 		// Encryption Key
 		//

@@ -1,0 +1,7 @@
+{{ define "site::error" }}{{ template "site::header" . }}
+<section class="mx-auto max-w-xl rounded-xl bg-white p-8 text-center shadow-sm dark:bg-slate-900">
+  <p class="text-5xl font-bold text-brand-amber">{{ .code }}</p>
+  <h1 class="mt-3 text-xl font-semibold" data-testid="error-title">{{ .message }}</h1>
+  <a href="/" class="mt-6 inline-block text-brand-navy underline dark:text-brand-amber">{{ t .lang "site-layout.back-home" }}</a>
+</section>
+{{ template "site::footer" . }}{{ end }}
