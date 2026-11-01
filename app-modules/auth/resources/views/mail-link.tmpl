@@ -1,7 +1,7 @@
 {{ define "auth::mail-link" }}<!doctype html>
 <html lang="{{ .lang }}"><body style="font-family: system-ui, sans-serif; color: #1e293b;">
   <h2 style="color: #1A3C5E;">{{ .appName }}</h2>
-  <p>{{ if eq .purpose "reset_password" }}{{ t .lang "auth.mail-reset-body" }}{{ else }}{{ t .lang "auth.mail-verify-body" }}{{ end }}</p>
-  <p><a href="{{ .link }}" style="display: inline-block; background: #1A3C5E; color: #fff; padding: 10px 18px; border-radius: 6px; text-decoration: none;">{{ if eq .purpose "reset_password" }}{{ t .lang "auth.reset-button" }}{{ else }}{{ t .lang "auth.mail-verify-button" }}{{ end }}</a></p>
+  <p>{{ if eq .purpose "reset_password" }}{{ t .lang "auth.mail-reset-body" }}{{ else if eq .purpose "sign_in" }}{{ t .lang "auth.mail-sign-in-body" }}{{ else }}{{ t .lang "auth.mail-verify-body" }}{{ end }}</p>
+  <p><a href="{{ .link }}" style="display: inline-block; background: #1A3C5E; color: #fff; padding: 10px 18px; border-radius: 6px; text-decoration: none;">{{ if eq .purpose "reset_password" }}{{ t .lang "auth.reset-button" }}{{ else if eq .purpose "sign_in" }}{{ t .lang "auth.mail-sign-in-button" }}{{ else }}{{ t .lang "auth.mail-verify-button" }}{{ end }}</a></p>
   <p style="color: #64748b; font-size: 13px;">{{ tr .lang "auth.mail-expires" "minutes" (printf "%d" .minutes) }}</p>
 </body></html>{{ end }}

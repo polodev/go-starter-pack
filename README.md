@@ -10,7 +10,7 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
       seeders, views, translations and admin menu; `make:module` creates and registers one
 - [x] **Bilingual site** (English, Bangla): Goravel's translator, each module's `lang/<locale>.json`, a language switch
 - [x] **Web login** with Goravel's session guard: register, login, logout, email verification, password reset,
-      profile; CSRF on every form; login throttling; Laravel's `auth`, `verified` and `guest` middleware
+      sign-in links by email, profile; CSRF on every form; login throttling; Laravel's `auth`, `verified` and `guest` middleware
 - [x] **Token API** under `/api/v1/auth` (JWT guard) with Laravel's JSON shapes
 - [x] **Roles and permissions** (the Laravel apps' model): permissions and five ranked roles defined in code and synced,
       one role per person plus direct exceptions, wildcards, admin routes that fail closed, Goravel's Gate wired in
@@ -102,7 +102,8 @@ go test ./... -count=1
 ```
 
 Tests use `DB_TEST_DATABASE` (default `<DB_DATABASE>_test`) and refuse any other database. Web tests drive pages like
-a browser (session cookie, CSRF token). The R2 tests write to the real buckets and delete what they write. AI tests
+a browser (session cookie, CSRF token). The R2 tests write to the real buckets and delete what they write. The SES test sends one mail to Amazon's mailbox
+simulator (it reaches no person). AI tests
 use provider `fake`, so no paid API is called.
 
 ## Docs

@@ -1,6 +1,6 @@
 {{ define "auth::mail-link-text" }}{{ .appName }}
 
-{{ if eq .purpose "reset_password" }}{{ t .lang "auth.mail-reset-body" }}{{ else }}{{ t .lang "auth.mail-verify-body" }}{{ end }}
+{{ if eq .purpose "reset_password" }}{{ t .lang "auth.mail-reset-body" }}{{ else if eq .purpose "sign_in" }}{{ t .lang "auth.mail-sign-in-body" }}{{ else }}{{ t .lang "auth.mail-verify-body" }}{{ end }}
 
 {{ .link }}
 

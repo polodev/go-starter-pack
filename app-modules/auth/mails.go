@@ -37,10 +37,10 @@ func sendLink(lang, to, purpose, link string) error {
 	if err != nil {
 		return err
 	}
-	subjectKey := "auth.mail-subject-verify"
-	if purpose == PurposeResetPassword {
-		subjectKey = "auth.mail-subject-reset"
-	}
+	subjectKey := map[string]string{
+		PurposeVerifyEmail: "auth.mail-subject-verify", PurposeResetPassword: "auth.mail-subject-reset",
+		PurposeSignIn: "auth.mail-subject-sign-in",
+	}[purpose]
 	return SendMail(Outgoing{To: to, Subject: web.Translate(lang, subjectKey), HTML: html, Text: text})
 }
 

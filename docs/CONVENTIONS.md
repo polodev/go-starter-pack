@@ -95,7 +95,8 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
 - Validate on the server; on errors answer 422 with the typed values kept.
 - Passwords: bcrypt through `facades.Hash()` (Laravel's default), at least 8 characters, never logged or returned.
 - Login: Goravel session guard (`Guard("web")`), throttled with the rate limiter; unknown email and wrong password give
-  the same answer. Email links: random secret, only its SHA-256 stored, single use, expiring.
+  the same answer. Email links: random secret, only its SHA-256 stored, single use, expiring; a link that signs in
+  opens a page with a button (a POST uses it), so mail scanners cannot use it up.
 - Middleware that stops a request answers with `Redirect(...).Abort()` or an `AbortableResponse` (a bare
   `Request().Abort()` answers 400).
 - Private files and other sensitive things: unknown and forbidden both answer 404.

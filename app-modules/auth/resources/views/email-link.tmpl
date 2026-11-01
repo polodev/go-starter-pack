@@ -1,0 +1,19 @@
+{{ define "auth::email-link" }}{{ template "site::header" . }}{{ template "auth::card-start" . }}
+<p class="mb-4 text-sm text-slate-600 dark:text-slate-400">{{ t .lang "auth.email-link-intro" }}</p>
+<form method="post" action="/login/email-link" class="space-y-4" data-testid="email-link-form">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <label class="block text-sm">{{ t .lang "auth.email" }}
+    <input type="email" name="email" required autofocus class="{{ template "auth::input-class" }}">
+  </label>
+  <button class="{{ template "auth::button-class" }}" data-testid="email-link-submit">{{ t .lang "auth.email-link-button" }}</button>
+</form>
+<p class="mt-4 text-sm"><a href="/login" class="text-brand-navy underline dark:text-brand-amber">{{ t .lang "auth.password-login-link" }}</a></p>
+{{ template "auth::card-end" . }}{{ template "site::footer" . }}{{ end }}
+
+{{ define "auth::email-link-confirm" }}{{ template "site::header" . }}{{ template "auth::card-start" . }}
+<p class="mb-4 text-sm text-slate-600 dark:text-slate-400">{{ t .lang "auth.email-link-confirm-body" }}</p>
+<form method="post" action="/login/email-link/{{ .token }}" data-testid="email-link-confirm-form">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <button class="{{ template "auth::button-class" }}" data-testid="email-link-confirm-submit">{{ t .lang "auth.email-link-confirm-button" }}</button>
+</form>
+{{ template "auth::card-end" . }}{{ template "site::footer" . }}{{ end }}

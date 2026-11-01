@@ -45,5 +45,17 @@
   "mail-verify-button": "Verify email",
   "mail-reset-body": "Someone asked to reset the password of your account. If it was you, choose a new password:",
   "mail-expires": "This link works once and expires in :minutes minutes. If you did not ask for it, ignore this email.",
-  "profile-change-picture": "Change picture"
+  "profile-change-picture": "Change picture",
+  "title-email-link": "Sign in with an email link",
+  "title-email-link-confirm": "Sign in",
+  "email-link-intro": "Enter your email and we will send a link that signs you in, no password needed.",
+  "email-link-button": "Email me a sign-in link",
+  "email-link-link": "Sign in with an email link",
+  "password-login-link": "Sign in with your password instead",
+  "email-link-confirm-body": "Press the button to finish signing in on this device.",
+  "email-link-confirm-button": "Sign me in",
+  "status-sign-in-link-sent": "If that email has an account, a sign-in link is on its way.",
+  "mail-subject-sign-in": "Your sign-in link",
+  "mail-sign-in-body": "Someone asked for a link to sign in to your account. If it was you, open it:",
+  "mail-sign-in-button": "Sign in"
 }

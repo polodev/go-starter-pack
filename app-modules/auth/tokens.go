@@ -14,11 +14,13 @@ import (
 const (
 	PurposeVerifyEmail   = "verify_email"
 	PurposeResetPassword = "reset_password"
+	PurposeSignIn        = "sign_in"
 )
 
 var lifetimes = map[string]time.Duration{
 	PurposeVerifyEmail:   24 * time.Hour,
 	PurposeResetPassword: 60 * time.Minute,
+	PurposeSignIn:        15 * time.Minute,
 }
 
 func hashSecret(secret string) string {

@@ -14,7 +14,7 @@ import (
 // so a link cannot put free text on the page.
 var statusKeys = map[string]bool{
 	"registered": true, "verified": true, "verification-sent": true, "reset-link-sent": true,
-	"password-reset": true, "logged-out": true, "link-invalid": true,
+	"password-reset": true, "logged-out": true, "link-invalid": true, "sign-in-link-sent": true,
 }
 
 func status(ctx http.Context) string {

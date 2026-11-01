@@ -66,6 +66,11 @@ With `ses`, `config/mail.go` connects to `email-smtp.<region>.amazonaws.com:587`
 IAM secret key (AWS's algorithm, `app/support/ses`, tested against AWS's examples). The sender address must be verified
 in SES; in the SES sandbox only verified addresses receive mail.
 
+Keep `MAIL_MAILER` on the catcher while you develop, even with the SES keys in `.env`, so registering locally does
+not mail real people. `tests/feature/ses_mail_test.go` checks the SES keys for real: it sends one mail to Amazon's
+mailbox simulator (`success@simulator.amazonses.com`, which delivers to nobody) and checks that a wrong password is
+refused. It skips itself when the keys are missing.
+
 A queued mail is sent by the worker (`go run .` runs one; production: `queue:work`). If sending fails it lands in
 `failed_jobs`: `go run . artisan queue:failed`, then `queue:retry all` once the mail server works.
 

@@ -13,6 +13,7 @@
 </form>
 <div class="mt-4 flex justify-between text-sm">
   <a href="/forgot-password" class="text-brand-navy underline dark:text-brand-amber" data-testid="forgot-link">{{ t .lang "auth.forgot-link" }}</a>
+  <a href="/login/email-link" class="text-brand-navy underline dark:text-brand-amber" data-testid="email-link-link">{{ t .lang "auth.email-link-link" }}</a>
   <a href="/register" class="text-brand-navy underline dark:text-brand-amber">{{ t .lang "auth.register-link" }}</a>
 </div>
 {{ template "auth::card-end" . }}{{ template "site::footer" . }}{{ end }}
