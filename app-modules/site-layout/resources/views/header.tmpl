@@ -6,10 +6,7 @@
   <meta name="csrf-token" content="{{ .csrf }}">
   <title>{{ if .title }}{{ .title }} · {{ end }}{{ .appName }}</title>
   <link rel="stylesheet" href="/public/css/app.css">
-  <script>
-    // Dark mode follows the saved choice, else the system setting (before paint, so there is no flash).
-    try { if (localStorage.theme === "dark" || (!localStorage.theme && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("dark"); } catch (e) {}
-  </script>
+  <script src="/public/js/theme.js"></script>
 </head>
 <body class="flex min-h-full flex-col bg-brand-cloud text-slate-800 dark:bg-page-dark dark:text-slate-200 {{ if eq .lang "bn" }}font-bangla{{ else }}font-latin{{ end }}">
 <header class="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
@@ -32,7 +29,7 @@
         {{ $lang := .lang }}{{ $path := .path }}
         {{ range .locales }}<a href="/language/{{ . }}?next={{ $path }}" class="rounded px-2 py-0.5 {{ if eq . $lang }}bg-brand-amber text-white{{ else }}hover:bg-slate-100 dark:hover:bg-slate-800{{ end }}">{{ upper . }}</a>{{ end }}
       </span>
-      <button type="button" onclick="document.documentElement.classList.toggle('dark'); try { localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light' } catch (e) {}" class="rounded px-2 py-0.5 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="{{ t .lang "site-layout.toggle-theme" }}">◐</button>
+      <button type="button" data-theme-toggle data-testid="theme-toggle" class="rounded px-2 py-0.5 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="{{ t .lang "site-layout.toggle-theme" }}">◐</button>
     </div>
   </nav>
 </header>

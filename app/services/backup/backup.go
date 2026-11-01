@@ -13,6 +13,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -165,6 +166,9 @@ func copyFile(source, target string) error {
 // List returns the stored backups, oldest first.
 func List() ([]string, error) {
 	files, err := facades.Storage().Disk(facades.Config().GetString("backup.disk")).Files(Folder())
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil, nil // the local disk has no folder before the first backup; R2 just lists nothing
+	}
 	if err != nil {
 		return nil, err
 	}

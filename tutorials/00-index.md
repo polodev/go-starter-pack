@@ -35,3 +35,4 @@ Start here. Every page has an **Index** link at the top and bottom, plus Previou
 | 27 | [PDF](27-pdf.md) | HTML and CSS to PDF with headless Chrome |
 | 28 | [AI service](28-ai-service.md) | Claude, OpenAI and Gemini through Goravel's AI SDK, with AI API logs |
 | 29 | [Bilingual pages](29-bilingual-pages.md) | Pages in English and Bangla with per-part fallback |
+| 30 | [Security headers](30-security-headers.md) | CSP, no framing, HSTS: one global middleware, no inline scripts |

@@ -33,6 +33,7 @@ func (r *BackupRun) Handle(ctx console.Context) error {
 	stored, err := backup.Run(time.Now())
 	if err != nil {
 		ctx.Error(err.Error())
+		_ = backup.Notify("The database backup failed", err.Error())
 		return err
 	}
 	ctx.Success("stored " + stored.Path + " on " + stored.Disk)

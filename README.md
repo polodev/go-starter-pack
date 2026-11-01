@@ -21,7 +21,9 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
 - [x] **Mail** through Goravel's mail, queued; Amazon SES through its SMTP interface
 - [x] **PDF** from HTML and CSS with headless Chrome
 - [x] **AI service** on Goravel's AI SDK (Claude, OpenAI, Gemini) with AI API logs and cost estimates
-- [x] **Database queue** (Laravel's `jobs`, `failed_jobs`) and `queue:work`; **backups** to a private R2 bucket
+- [x] **Database queue** (Laravel's `jobs`, `failed_jobs`) and `queue:work`; **backups** to a private R2 bucket with
+      Spatie's retention (`backup:clean`) and freshness checks (`backup:monitor`, mail on failure)
+- [x] **Security headers** on every answer: Content-Security-Policy, no framing, `nosniff`, HSTS in production
 - [x] Tests on a separate `*_test` database, including real R2 round trips; conventions, tutorials, Supervisor config
 
 ## Modules

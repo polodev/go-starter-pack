@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 12 of 29** | [Index](00-index.md) | [Previous: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md) | [Next: 13 Database backups](13-database-backups.md)
+**Tutorial 12 of 30** | [Index](00-index.md) | [Previous: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md) | [Next: 13 Database backups](13-database-backups.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -33,6 +33,7 @@
 27. [PDF](27-pdf.md)  
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
+30. [Security headers](30-security-headers.md)  
 
 </details>
 <!-- nav:end -->

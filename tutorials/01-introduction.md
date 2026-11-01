@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 1 of 29** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
+**Tutorial 1 of 30** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -33,6 +33,7 @@
 27. [PDF](27-pdf.md)  
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
+30. [Security headers](30-security-headers.md)  
 
 </details>
 <!-- nav:end -->

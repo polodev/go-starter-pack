@@ -6,7 +6,7 @@
   <meta name="csrf-token" content="{{ .csrf }}">
   <title>{{ .title }} · Admin · {{ .appName }}</title>
   <link rel="stylesheet" href="/public/css/app.css">
-  <script>try { if (localStorage.theme === "dark" || (!localStorage.theme && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("dark"); } catch (e) {}</script>
+  <script src="/public/js/theme.js"></script>
 </head>
 <body class="min-h-full bg-brand-cloud font-latin text-slate-800 dark:bg-page-dark dark:text-slate-200">
 <div class="flex min-h-screen">

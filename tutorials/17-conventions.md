@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 17 of 29** | [Index](00-index.md) | [Previous: 16 MySQL or PostgreSQL](16-mysql-or-postgresql.md) | [Next: 18 Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md)
+**Tutorial 17 of 30** | [Index](00-index.md) | [Previous: 16 MySQL or PostgreSQL](16-mysql-or-postgresql.md) | [Next: 18 Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -33,6 +33,7 @@
 27. [PDF](27-pdf.md)  
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
+30. [Security headers](30-security-headers.md)  
 
 </details>
 <!-- nav:end -->
@@ -52,6 +53,8 @@ The full rules are in `docs/CONVENTIONS.md`. The short version:
 9. **Before you finish:** `gofmt -l .` (empty), `go vet ./...`, `go test ./... -count=1`.
 10. **Docs move with code**: `README.md`, `docs/CONVENTIONS.md`, the matching tutorial.
 11. **Git:** short imperative subject plus a bullet list; no tool or assistant attribution; never commit `.env`.
+12. **No inline scripts:** JavaScript in `public/js/`, buttons with `data-*` attributes; the Content-Security-Policy
+    blocks inline code (tutorial 30).
 
 <!-- foot:start -->
 ---

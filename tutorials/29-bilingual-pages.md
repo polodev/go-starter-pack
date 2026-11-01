@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 29 of 29** | [Index](00-index.md) | [Previous: 28 AI service](28-ai-service.md) | Next: none
+**Tutorial 29 of 30** | [Index](00-index.md) | [Previous: 28 AI service](28-ai-service.md) | [Next: 30 Security headers](30-security-headers.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -33,6 +33,7 @@
 27. [PDF](27-pdf.md)  
 28. [AI service](28-ai-service.md)  
 **29. [Bilingual pages](29-bilingual-pages.md)**  
+30. [Security headers](30-security-headers.md)  
 
 </details>
 <!-- nav:end -->
@@ -56,5 +57,5 @@ content := pages.Load(page, "bn") // content.Title, content.Description, content
 
 <!-- foot:start -->
 ---
-[Previous: 28 AI service](28-ai-service.md) | [Index](00-index.md) | Next: none
+[Previous: 28 AI service](28-ai-service.md) | [Index](00-index.md) | [Next: 30 Security headers](30-security-headers.md)
 <!-- foot:end -->

@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 21 of 29** | [Index](00-index.md) | [Previous: 20 Layouts, pages and translations](20-layouts-and-translations.md) | [Next: 22 Roles and permissions](22-roles-and-permissions.md)
+**Tutorial 21 of 30** | [Index](00-index.md) | [Previous: 20 Layouts, pages and translations](20-layouts-and-translations.md) | [Next: 22 Roles and permissions](22-roles-and-permissions.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -33,6 +33,7 @@
 27. [PDF](27-pdf.md)  
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
+30. [Security headers](30-security-headers.md)  
 
 </details>
 <!-- nav:end -->

@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 8 of 29** | [Index](00-index.md) | [Previous: 7 Database: migrations, models, queries, seeding](07-database.md) | [Next: 9 Token API: register, login, me](09-auth-api.md)
+**Tutorial 8 of 30** | [Index](00-index.md) | [Previous: 7 Database: migrations, models, queries, seeding](07-database.md) | [Next: 9 Token API: register, login, me](09-auth-api.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -33,6 +33,7 @@
 27. [PDF](27-pdf.md)  
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
+30. [Security headers](30-security-headers.md)  
 
 </details>
 <!-- nav:end -->

@@ -98,6 +98,11 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
 - Middleware that stops a request answers with `Redirect(...).Abort()` or an `AbortableResponse` (a bare
   `Request().Abort()` answers 400).
 - Private files and other sensitive things: unknown and forbidden both answer 404.
+- Every answer carries the security headers (`app/http/middleware.SecurityHeaders`, global in `bootstrap/app.go`):
+  a Content-Security-Policy that allows scripts only from this site, `X-Frame-Options: DENY`, `nosniff`, a strict
+  referrer policy, and HSTS in production. So **no inline scripts and no `onclick=`**: JavaScript lives in
+  `public/js/` and buttons get a `data-*` attribute (see `public/js/theme.js`). A new outside source goes into
+  `SECURITY_CONTENT_SECURITY_POLICY`, never by switching the policy off.
 
 ## JSON API
 
@@ -126,6 +131,9 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
 - Backups (`backup:run`, daily at 01:30): the dump streams through gzip into `storage/app/backup-temp` and goes to
   `r2_backups` as a multipart upload, one 16 MB part at a time, so memory stays flat for any database size. Never read a
   large file whole: stream it (`io.Copy`, `FPutObject`).
+- `backup:clean` (02:00) keeps backups by Spatie's retention settings and never deletes the newest; `backup:monitor`
+  (03:00) fails, logs and mails `BACKUP_NOTIFICATION_EMAIL` when the newest backup is too old or they use too much
+  space. Set that address in production.
 
 ## Mail, PDF and AI
 

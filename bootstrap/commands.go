@@ -11,6 +11,8 @@ func Commands() []console.Command {
 	return append(modular.Collect(Modules(), func(m modular.HasCommands) []console.Command { return m.Commands() }),
 		&commands.BackupRun{},
 		&commands.BackupList{},
+		&commands.BackupClean{},
+		&commands.BackupMonitor{},
 		&commands.QueueWork{},
 		&commands.MakeModule{},
 	)

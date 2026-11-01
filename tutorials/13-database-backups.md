@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 13 of 29** | [Index](00-index.md) | [Previous: 12 Files on Cloudflare R2](12-files-on-r2.md) | [Next: 14 Testing](14-testing.md)
+**Tutorial 13 of 30** | [Index](00-index.md) | [Previous: 12 Files on Cloudflare R2](12-files-on-r2.md) | [Next: 14 Testing](14-testing.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -33,6 +33,7 @@
 27. [PDF](27-pdf.md)  
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
+30. [Security headers](30-security-headers.md)  
 
 </details>
 <!-- nav:end -->
@@ -42,6 +43,8 @@
 ```sh
 go run . artisan backup:run     # mysqldump (or pg_dump) -> gzip -> r2_backups
 go run . artisan backup:list    # db-backups/go-starter-pack/2026-11-01-01-30-00.sql.gz ...
+go run . artisan backup:clean   # delete old backups by the retention settings
+go run . artisan backup:monitor # is the newest backup recent? non-zero exit and a mail when not
 ```
 
 Each backup is `<BACKUP_PREFIX>/<BACKUP_NAME>/<YYYY-MM-DD-HH-MM-SS>.sql.gz` on the private bucket.
@@ -65,7 +68,39 @@ Each backup is `<BACKUP_PREFIX>/<BACKUP_NAME>/<YYYY-MM-DD-HH-MM-SS>.sql.gz` on t
   crashed run are cleaned at the next run. You need free disk space for one compressed dump (often 10 to 20% of the
   database). The test backs up a 48 MB dump while the program's memory grows by under 2 MB.
 
-**Schedule:** `bootstrap/schedule.go` runs `backup:run` daily at 01:30 when backup keys are set.
+**Schedule:** when backup keys are set, `bootstrap/schedule.go` runs `backup:run` at 01:30, `backup:clean` at 02:00
+(after the backup, so the size limit counts it) and `backup:monitor` at 03:00, each `OnOneServer()`.
+
+## Retention: backup:clean
+
+spatie/laravel-backup's default strategy, with its setting names (`config/backup.go`, `backup.cleanup`):
+
+| Setting (.env) | Default | Meaning |
+|---|---|---|
+| `BACKUP_KEEP_ALL_BACKUPS_FOR_DAYS` | 7 | every backup of the last 7 days stays |
+| `BACKUP_KEEP_DAILY_BACKUPS_FOR_DAYS` | 16 | then the newest of each day, for 16 more days |
+| `BACKUP_KEEP_WEEKLY_BACKUPS_FOR_WEEKS` | 8 | then the newest of each week, for 8 weeks |
+| `BACKUP_KEEP_MONTHLY_BACKUPS_FOR_MONTHS` | 4 | then the newest of each month, for 4 months |
+| `BACKUP_KEEP_YEARLY_BACKUPS_FOR_YEARS` | 2 | then the newest of each year, for 2 years; older ones go |
+| `BACKUP_DELETE_OLDEST_WHEN_USING_MORE_MEGABYTES_THAN` | 5000 | then the oldest go until the rest fit (0: no limit) |
+
+A year of nightly backups leaves about 36. **The newest backup is never deleted**, whatever the settings. Files in
+the folder whose names are not a backup time are left alone.
+
+The decision is a pure function, `backup.Plan(backups, now, retention)`, so it is unit-tested without a bucket
+(`app/services/backup/retention_test.go`); `backup.Clean(now)` applies it to the disk.
+
+## Monitoring: backup:monitor
+
+Spatie's `backup:monitor`. Unhealthy when there is no backup, the newest is older than `BACKUP_MAXIMUM_AGE_IN_DAYS`
+(1), or all of them use more than `BACKUP_MAXIMUM_STORAGE_IN_MEGABYTES` (5000). Then it:
+
+- writes the problem to the log,
+- mails `BACKUP_NOTIFICATION_EMAIL` (sent at once, not through the queue: a stuck queue must not hide a stuck backup),
+- exits non-zero, so a cron wrapper or uptime checker notices too.
+
+A failed `backup:run` or `backup:clean` sends the same kind of notice. Without `BACKUP_NOTIFICATION_EMAIL` the log is
+the only place it shows up, so set it in production.
 
 **Restore:** download the file from the private bucket, then
 
@@ -75,8 +110,8 @@ gunzip -c 2026-11-01-01-30-00.sql.gz | mysql -uroot go_starter
 
 **Test:** `tests/feature/backup_test.go` makes a real backup of the test database on the real bucket, finds it with
 `backup:list`, unzips it, checks the tables are in it, and deletes it.
-
-Not yet: retention (`backup:clean`) and a freshness monitor, which the Rust starter has.
+`tests/feature/backup_maintenance_test.go` runs `backup:clean` and `backup:monitor` on the local disk with fake
+backups of different ages: what stays, what goes, and the notices.
 
 <!-- foot:start -->
 ---
