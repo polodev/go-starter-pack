@@ -3,6 +3,7 @@ package commands
 import (
 	"errors"
 	"fmt"
+	"go/format"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -117,5 +118,9 @@ func registerModule(root, name, pkg string) error {
 	importLine := fmt.Sprintf("\t%s \"goravel/app-modules/%s\"\n", pkg, name)
 	text = strings.Replace(text, "import (\n", "import (\n"+importLine, 1)
 	text = strings.Replace(text, marker, fmt.Sprintf("\t\t&%s.Module{},\n%s", pkg, marker), 1)
-	return os.WriteFile(registry, []byte(text), 0o644)
+	formatted, err := format.Source([]byte(text)) // keeps the imports sorted, like gofmt
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(registry, formatted, 0o644)
 }

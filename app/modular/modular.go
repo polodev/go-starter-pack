@@ -68,6 +68,15 @@ type MenuItem struct {
 // MenuSections is the order of the sidebar sections; unknown sections come last.
 var MenuSections = []string{"Overview", "Content", "People and access", "System"}
 
+var registered []Module
+
+// Register keeps the module list (bootstrap/modules.go) for modules that need it at run time, such as the admin
+// sidebar. Modules cannot import bootstrap, which imports them.
+func Register(modules []Module) { registered = modules }
+
+// Registered is the module list given to Register.
+func Registered() []Module { return registered }
+
 // Collect gathers one kind of item from every module that provides it.
 func Collect[T any, I any](modules []Module, pick func(I) []T) []T {
 	var items []T

@@ -1,0 +1,45 @@
+{{ define "admin::header" }}<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ .csrf }}">
+  <title>{{ .title }} · Admin · {{ .appName }}</title>
+  <link rel="stylesheet" href="/public/css/app.css">
+  <script>try { if (localStorage.theme === "dark" || (!localStorage.theme && matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("dark"); } catch (e) {}</script>
+</head>
+<body class="min-h-full bg-brand-cloud font-latin text-slate-800 dark:bg-page-dark dark:text-slate-200">
+<div class="flex min-h-screen">
+  <aside class="hidden w-60 shrink-0 border-r border-slate-200 bg-white px-4 py-6 md:block dark:border-slate-800 dark:bg-slate-900" data-testid="admin-sidebar">
+    <a href="/admin" class="mb-6 block text-lg font-bold text-brand-navy dark:text-white">{{ .appName }} admin</a>
+    {{ range .menu }}
+      <p class="mb-1 mt-5 text-xs font-semibold uppercase tracking-wide text-slate-400">{{ .Name }}</p>
+      {{ range .Links }}
+        <a href="{{ .Href }}" class="flex items-center gap-2 rounded px-2 py-1.5 text-sm {{ if .Active }}bg-brand-navy text-white{{ else }}hover:bg-slate-100 dark:hover:bg-slate-800{{ end }}" data-testid="menu-link">
+          <span class="w-4 text-center">{{ .Icon }}</span>{{ .Label }}</a>
+      {{ end }}
+    {{ end }}
+  </aside>
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 text-sm dark:border-slate-800 dark:bg-slate-900">
+      <nav class="flex flex-wrap items-center gap-1 text-slate-500" data-testid="breadcrumb">
+        {{ range $index, $crumb := .crumbs }}{{ if $index }}<span>›</span>{{ end }}{{ if $crumb.Href }}<a href="{{ $crumb.Href }}" class="hover:text-brand-amber">{{ $crumb.Label }}</a>{{ else }}<span class="text-slate-800 dark:text-slate-200">{{ $crumb.Label }}</span>{{ end }}{{ end }}
+      </nav>
+      <div class="flex items-center gap-4">
+        <a href="/" class="hover:text-brand-amber">Site</a>
+        {{ if .user }}<span>{{ .user.Name }}</span>{{ end }}
+        <form method="post" action="/logout"><input type="hidden" name="_token" value="{{ .csrf }}"><button class="hover:text-brand-coral">Log out</button></form>
+      </div>
+    </header>
+    <main class="mx-auto w-full max-w-[1920px] flex-1 px-6 py-6">
+      {{ if .saved }}<div class="mb-4 rounded border border-emerald-300 bg-emerald-50 px-4 py-2 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200" data-testid="status">Saved.</div>{{ end }}
+      {{ if .error }}<div class="mb-4 rounded border border-red-300 bg-red-50 px-4 py-2 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200" data-testid="status">That did not work ({{ .error }}). Please try again.</div>{{ end }}
+      <h1 class="mb-5 text-2xl font-bold text-brand-navy dark:text-white" data-testid="page-title">{{ .title }}</h1>
+{{ end }}
+{{ define "admin::footer" }}    </main>
+  </div>
+</div>
+</body>
+</html>{{ end }}
+{{ define "admin::card-start" }}<div class="overflow-x-auto rounded-xl border border-slate-200 bg-white text-sm dark:border-slate-800 dark:bg-slate-900">{{ end }}
+{{ define "admin::card-end" }}</div>{{ end }}

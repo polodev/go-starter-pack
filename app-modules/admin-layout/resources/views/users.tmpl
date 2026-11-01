@@ -1,0 +1,74 @@
+{{ define "admin::users-index" }}{{ template "admin::header" . }}
+<form method="get" class="mb-4 flex gap-2">
+  <input name="q" value="{{ .q }}" placeholder="Search name or email" class="w-72 rounded border border-slate-300 px-3 py-1.5 dark:border-slate-700 dark:bg-slate-800" data-testid="search">
+  <button class="rounded bg-brand-navy px-3 py-1.5 text-white">Search</button>
+</form>
+{{ template "admin::card-start" . }}
+<table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Name</th><th class="px-4 py-2">Email</th><th class="px-4 py-2">Role</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+  {{ $roles := .roles }}{{ $can := .can }}
+  {{ range .users }}
+    <tr data-testid="user-row">
+      <td class="px-4 py-2"><a href="/admin/users/{{ .ID }}" class="text-brand-navy underline dark:text-brand-amber" data-testid="id-link">{{ .ID }}</a></td>
+      <td class="px-4 py-2">{{ .Name }}</td>
+      <td class="px-4 py-2">{{ .Email }} {{ if not .EmailVerifiedAt }}<span class="text-xs text-amber-600">(not verified)</span>{{ end }}</td>
+      <td class="px-4 py-2">{{ index $roles .ID }}</td>
+      <td class="px-4 py-2 text-right"><a href="/admin/users/{{ .ID }}" class="underline">Show</a>{{ if call $can "users.manage" }} · <a href="/admin/users/{{ .ID }}/edit" class="underline" data-testid="edit-link">Edit</a>{{ end }}</td>
+    </tr>
+  {{ else }}
+    <tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">No users found.</td></tr>
+  {{ end }}
+  </tbody>
+</table>
+{{ template "admin::card-end" . }}
+<div class="mt-3 flex items-center gap-3 text-sm text-slate-500">
+  <span>{{ .total }} user(s)</span>
+  {{ if gt .prev 0 }}<a href="?q={{ .q }}&page={{ .prev }}" class="underline">Previous</a>{{ end }}
+  {{ if .next }}<a href="?q={{ .q }}&page={{ .next }}" class="underline">Next</a>{{ end }}
+</div>
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "admin::user-show" }}{{ template "admin::header" . }}
+{{ template "admin::card-start" . }}
+<dl class="divide-y divide-slate-200 dark:divide-slate-800">
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">ID</dt><dd>{{ .account.ID }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Name</dt><dd data-testid="show-name">{{ .account.Name }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Email</dt><dd data-testid="show-email">{{ .account.Email }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Verified</dt><dd>{{ if .account.EmailVerifiedAt }}yes{{ else }}no{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Role</dt><dd data-testid="show-role">{{ if .role }}{{ .role }}{{ else }}none{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Direct exceptions</dt><dd data-testid="show-exceptions">{{ range .exceptions }}<span class="mr-1 rounded bg-slate-100 px-1.5 dark:bg-slate-800">{{ . }}</span>{{ else }}none{{ end }}</dd></div>
+</dl>
+{{ template "admin::card-end" . }}
+{{ if call .can "users.manage" }}<a href="/admin/users/{{ .account.ID }}/edit" class="mt-4 inline-block rounded bg-brand-navy px-4 py-2 text-white" data-testid="edit-button">Edit</a>{{ end }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "admin::user-edit" }}{{ template "admin::header" . }}
+<form method="post" action="/admin/users/{{ .account.ID }}" class="max-w-2xl space-y-5" data-testid="user-form">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <label class="block text-sm">Name
+    <input name="name" value="{{ .name }}" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-800"></label>
+  {{ with .errors.name }}<p class="text-sm text-brand-coral" data-testid="error-name">{{ . }}</p>{{ end }}
+  <label class="block text-sm">Email
+    <input name="email" value="{{ .email }}" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-800"></label>
+  {{ with .errors.email }}<p class="text-sm text-brand-coral" data-testid="error-email">{{ . }}</p>{{ end }}
+  {{ if call .can "roles.assign" }}
+  <fieldset class="rounded-xl border border-slate-200 p-4 dark:border-slate-800" data-testid="role-fieldset">
+    <legend class="px-1 text-sm font-semibold">Role (one per person)</legend>
+    {{ $current := .role }}
+    <select name="role" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-800" data-testid="role-select">
+      <option value="">No role (not staff)</option>
+      {{ range .roleList }}<option value="{{ .Slug }}" {{ if eq .Slug $current }}selected{{ end }}>{{ .Name }}</option>{{ end }}
+    </select>
+    {{ with .errors.role }}<p class="mt-1 text-sm text-brand-coral" data-testid="error-role">{{ . }}</p>{{ end }}
+    <p class="mt-4 text-sm font-semibold">Direct exceptions</p>
+    <p class="text-xs text-slate-500">Extra permissions for this person only. Role management cannot be given this way.</p>
+    {{ $selected := .selected }}
+    <div class="mt-2 grid gap-1 sm:grid-cols-2">
+      {{ range .permissionList }}<label class="flex items-center gap-2 text-sm"><input type="checkbox" name="exceptions[]" value="{{ .Key }}" {{ if index $selected .Key }}checked{{ end }}> {{ .Key }}</label>{{ end }}
+    </div>
+  </fieldset>
+  {{ end }}
+  <button class="rounded bg-brand-navy px-4 py-2 font-semibold text-white" data-testid="save-user">Save</button>
+</form>
+{{ template "admin::footer" . }}{{ end }}

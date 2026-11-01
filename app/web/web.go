@@ -211,6 +211,8 @@ func FuncMap() template.FuncMap {
 		"tr":         func(locale, key string, pairs ...string) string { return translate(locale, key, pairs...) },
 		"eq_str":     func(a, b any) bool { return fmt.Sprint(a) == fmt.Sprint(b) },
 		"has_prefix": strings.HasPrefix,
+		"list":       func(items ...string) []string { return items },
+		"split":      strings.Split,
 		"upper":      strings.ToUpper,
 	}
 }

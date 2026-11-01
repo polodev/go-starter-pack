@@ -1,0 +1,10 @@
+{{ define "admin::dashboard" }}{{ template "admin::header" . }}
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+  {{ range .stats }}
+  <a {{ if .href }}href="{{ .href }}"{{ end }} class="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900" data-testid="{{ .testid }}">
+    <p class="text-sm text-slate-500">{{ .label }}</p>
+    <p class="mt-2 text-3xl font-bold text-brand-navy dark:text-white">{{ .value }}</p>
+  </a>
+  {{ end }}
+</div>
+{{ template "admin::footer" . }}{{ end }}
