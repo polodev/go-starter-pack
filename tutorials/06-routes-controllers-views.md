@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 6 of 30** | [Index](00-index.md) | [Previous: 5 Project structure](05-project-structure.md) | [Next: 7 Database: migrations, models, queries, seeding](07-database.md)
+**Tutorial 6 of 31** | [Index](00-index.md) | [Previous: 5 Project structure](05-project-structure.md) | [Next: 7 Database: migrations, models, queries, seeding](07-database.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -34,6 +34,7 @@
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
+31. [Queue monitor](31-queue-monitor.md)  
 
 </details>
 <!-- nav:end -->

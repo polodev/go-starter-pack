@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 1 of 30** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
+**Tutorial 1 of 31** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -34,6 +34,7 @@
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
+31. [Queue monitor](31-queue-monitor.md)  
 
 </details>
 <!-- nav:end -->
@@ -64,11 +65,13 @@ language that is quick to learn. Goravel keeps the Laravel vocabulary, so you th
 | AI service and AI API logs | Laravel AI SDK / Prism | [28](28-ai-service.md) |
 | Bilingual pages | a CMS pages table | [29](29-bilingual-pages.md) |
 | Database queue with `failed_jobs` | `QUEUE_CONNECTION=database` | [10](10-queues-and-jobs.md) |
+| Queue monitor: job history, pending and failed jobs, retry | Horizon dashboard, jobs monitor | [31](31-queue-monitor.md) |
 | Artisan commands and the scheduler | `make:command`, `routes/console.php` | [11](11-console-commands-and-scheduler.md) |
 | Cloudflare R2 disks | `Storage::disk('s3')` | [12](12-files-on-r2.md) |
-| Database backups to the private bucket | spatie/laravel-backup `--only-db` | [13](13-database-backups.md) |
+| Database backups, retention, monitoring | spatie/laravel-backup `--only-db`, `backup:clean`, `backup:monitor` | [13](13-database-backups.md) |
 | Tests on a separate database | `php artisan test`, RefreshDatabase | [14](14-testing.md) |
 | Supervisor deployment | Forge/Supervisor | [15](15-deployment.md) |
+| Security headers (CSP, HSTS) | a headers package or Nginx config | [30](30-security-headers.md) |
 
 ## The three rules
 

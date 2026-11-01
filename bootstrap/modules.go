@@ -8,6 +8,7 @@ import (
 	media "goravel/app-modules/media"
 	pages "goravel/app-modules/pages"
 	pdf "goravel/app-modules/pdf"
+	queuewatcher "goravel/app-modules/queue-watcher"
 	rolepermission "goravel/app-modules/role-permission"
 	sitelayout "goravel/app-modules/site-layout"
 	"goravel/app/modular"
@@ -26,6 +27,7 @@ func Modules() []modular.Module {
 		&pdf.Module{},
 		&aiservice.Module{},
 		&pages.Module{},
+		&queuewatcher.Module{},
 		// modules-inject (do not remove)
 	}
 }

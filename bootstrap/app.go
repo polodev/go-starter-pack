@@ -40,13 +40,18 @@ func Boot() contractsfoundation.Application {
 		Create()
 }
 
-// bootModules registers every module's views (Laravel's loadViewsFrom). Translations come through
-// config app.lang_fs (modular.LangFS).
+// bootModules registers every module's views (Laravel's loadViewsFrom), then runs each module's Boot. Translations
+// come through config app.lang_fs (modular.LangFS).
 func bootModules() {
 	modular.Register(Modules())
 	for _, module := range Modules() {
 		if views, ok := module.(modular.HasViews); ok {
 			facades.View().LoadViewsFrom(path.Base(views.ViewsPath()))
+		}
+	}
+	for _, module := range Modules() {
+		if booting, ok := module.(modular.HasBoot); ok {
+			booting.Boot()
 		}
 	}
 }

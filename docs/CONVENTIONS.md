@@ -32,9 +32,10 @@ app-modules/<name>/
 ```
 
 - `go run . artisan make:module <kebab-name>` creates one and registers it in `bootstrap/modules.go`.
-- A module offers routes (`HasRoutes`), migrations, commands, jobs, schedules, seeders, views and admin menu items.
+- A module offers routes (`HasRoutes`), migrations, commands, jobs, schedules, seeders, views, admin menu items, and a
+  `Boot()` that runs once after everything is registered (`HasBoot`, Laravel's `ServiceProvider::boot`).
 - Dependency direction, no cycles: `site-layout`, `auth` < `role-permission` < `admin-layout` < modules with admin
-  screens (`activity-log`, `media`, `pages`, `ai-service`). Shared writers that low modules need live in `app/`
+  screens (`activity-log`, `media`, `pages`, `ai-service`, `queue-watcher`). Shared writers that low modules need live in `app/`
   (`app/activity`), never in a module.
 - App-wide code: `app/modular` (module system), `app/web` (web group, page data, templates, translation helpers),
   `app/activity`, `app/storage`, `app/services/backup`, `app/support`.
@@ -147,6 +148,9 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
 ## Queue, commands and the scheduler
 
 - Jobs: `make:job`, dispatch with `facades.Queue().Job(...).OnQueue(...).Dispatch()`; `queue:work` under Supervisor.
+- Every job run shows up in the queue monitor (`/admin/queue-watcher`) without extra code: the queue-watcher module
+  wraps every registered job at start-up (`modular.HasBoot`). A job whose arguments are secret goes into
+  `queuewatcher.HiddenArgumentJobs`; never put passwords or tokens in job arguments when a reference will do.
 - Commands: `<module>:<action>`, thin, the work in a service; a failure returns an error (non-zero exit).
 - Schedules: a module's `Schedule()` (or `bootstrap/schedule.go`), `OnOneServer()` for anything that must run once.
 

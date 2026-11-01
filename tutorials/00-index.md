@@ -36,3 +36,4 @@ Start here. Every page has an **Index** link at the top and bottom, plus Previou
 | 28 | [AI service](28-ai-service.md) | Claude, OpenAI and Gemini through Goravel's AI SDK, with AI API logs |
 | 29 | [Bilingual pages](29-bilingual-pages.md) | Pages in English and Bangla with per-part fallback |
 | 30 | [Security headers](30-security-headers.md) | CSP, no framing, HSTS: one global middleware, no inline scripts |
+| 31 | [Queue monitor](31-queue-monitor.md) | Every job run recorded; pending and failed jobs; retry and delete in the admin |

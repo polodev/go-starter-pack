@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 23 of 30** | [Index](00-index.md) | [Previous: 22 Roles and permissions](22-roles-and-permissions.md) | [Next: 24 Activity log](24-activity-log.md)
+**Tutorial 23 of 31** | [Index](00-index.md) | [Previous: 22 Roles and permissions](22-roles-and-permissions.md) | [Next: 24 Activity log](24-activity-log.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -34,6 +34,7 @@
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
+31. [Queue monitor](31-queue-monitor.md)  
 
 </details>
 <!-- nav:end -->

@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 29 of 30** | [Index](00-index.md) | [Previous: 28 AI service](28-ai-service.md) | [Next: 30 Security headers](30-security-headers.md)
+**Tutorial 29 of 31** | [Index](00-index.md) | [Previous: 28 AI service](28-ai-service.md) | [Next: 30 Security headers](30-security-headers.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -34,6 +34,7 @@
 28. [AI service](28-ai-service.md)  
 **29. [Bilingual pages](29-bilingual-pages.md)**  
 30. [Security headers](30-security-headers.md)  
+31. [Queue monitor](31-queue-monitor.md)  
 
 </details>
 <!-- nav:end -->

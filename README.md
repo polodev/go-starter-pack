@@ -21,7 +21,8 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
 - [x] **Mail** through Goravel's mail, queued; Amazon SES through its SMTP interface
 - [x] **PDF** from HTML and CSS with headless Chrome
 - [x] **AI service** on Goravel's AI SDK (Claude, OpenAI, Gemini) with AI API logs and cost estimates
-- [x] **Database queue** (Laravel's `jobs`, `failed_jobs`) and `queue:work`; **backups** to a private R2 bucket with
+- [x] **Database queue** (Laravel's `jobs`, `failed_jobs`) and `queue:work`, with a **queue monitor** in the admin
+      (every run recorded, pending and failed jobs, retry and delete); **backups** to a private R2 bucket with
       Spatie's retention (`backup:clean`) and freshness checks (`backup:monitor`, mail on failure)
 - [x] **Security headers** on every answer: Content-Security-Policy, no framing, `nosniff`, HSTS in production
 - [x] Tests on a separate `*_test` database, including real R2 round trips; conventions, tutorials, Supervisor config
@@ -39,6 +40,7 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
 | `pdf` | HTML to PDF with headless Chrome, example invoice |
 | `ai-service` | `aiservice.Chat` / `JSON`, AI API logs |
 | `pages` | bilingual website pages |
+| `queue-watcher` | queue monitor: history of every job run, pending and failed jobs, retry and delete |
 
 App-wide pieces outside the modules: `app/modular` (the module system), `app/web` (web middleware group, page data,
 templates), `app/activity` (activity writer), `app/storage` (R2 driver), `app/services/backup`, `app/support`.

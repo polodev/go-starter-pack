@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 19 of 30** | [Index](00-index.md) | [Previous: 18 Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md) | [Next: 20 Layouts, pages and translations](20-layouts-and-translations.md)
+**Tutorial 19 of 31** | [Index](00-index.md) | [Previous: 18 Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md) | [Next: 20 Layouts, pages and translations](20-layouts-and-translations.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -34,6 +34,7 @@
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
+31. [Queue monitor](31-queue-monitor.md)  
 
 </details>
 <!-- nav:end -->
@@ -74,7 +75,8 @@ func (m *Module) Routes() {
 ```
 
 A module implements only what it needs: `HasRoutes`, `HasMigrations`, `HasCommands`, `HasJobs`, `HasSchedule`,
-`HasSeeders`, `HasViews`, `HasAdminMenu` (see `app/modular/modular.go`).
+`HasSeeders`, `HasViews`, `HasAdminMenu`, and `HasBoot` (a `Boot()` that runs once after everything is registered,
+Laravel's `ServiceProvider::boot`; see `app/modular/modular.go`).
 
 ## Rules
 

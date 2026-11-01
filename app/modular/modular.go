@@ -50,6 +50,10 @@ type HasSeeders interface {
 // Templates in it are named "<module>::<view>" with {{ define "auth::login" }}, like Laravel's view namespaces.
 type HasViews interface{ ViewsPath() string }
 
+// HasBoot runs once at start-up, after every provider, module, job and route is registered (Laravel's
+// ServiceProvider::boot). queue-watcher uses it to wrap every registered job.
+type HasBoot interface{ Boot() }
+
 // HasAdminMenu adds links to the admin sidebar.
 type HasAdminMenu interface {
 	AdminMenu() []MenuItem

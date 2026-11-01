@@ -1,0 +1,216 @@
+{{ define "queue-watcher::tabs" }}
+<nav class="mb-5 flex flex-wrap gap-2 text-sm" data-testid="queue-tabs">
+  <a href="/admin/queue-watcher" class="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Overview</a>
+  <a href="/admin/queue-watcher/jobs" class="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Job history</a>
+  <a href="/admin/queue-watcher/pending" class="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Pending jobs</a>
+  <a href="/admin/queue-watcher/failed" class="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Failed jobs</a>
+</nav>
+{{ end }}
+
+{{ define "queue-watcher::status" }}<span class="rounded px-2 py-0.5 text-xs {{ if eq . "finished" }}bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200{{ else if eq . "failed" }}bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200{{ else if eq . "running" }}bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-200{{ else }}bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200{{ end }}" data-testid="run-status">{{ . }}</span>{{ end }}
+
+{{ define "queue-watcher::overview" }}{{ template "admin::header" . }}
+{{ template "queue-watcher::tabs" . }}
+<div class="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+  <a href="/admin/queue-watcher/pending" class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p class="text-xs uppercase text-slate-500">Waiting</p><p class="text-2xl font-bold" data-testid="count-waiting">{{ .counts.waiting }}</p></a>
+  <a href="/admin/queue-watcher/pending" class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p class="text-xs uppercase text-slate-500">Delayed</p><p class="text-2xl font-bold" data-testid="count-delayed">{{ .counts.delayed }}</p></a>
+  <a href="/admin/queue-watcher/pending" class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p class="text-xs uppercase text-slate-500">Running</p><p class="text-2xl font-bold" data-testid="count-running">{{ .counts.running }}</p></a>
+  <a href="/admin/queue-watcher/failed" class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"><p class="text-xs uppercase text-slate-500">Failed</p><p class="text-2xl font-bold {{ if .counts.failed }}text-red-700 dark:text-red-300{{ end }}" data-testid="count-failed">{{ .counts.failed }}</p></a>
+</div>
+<p class="mb-4 text-sm text-slate-500">Queue connection: <strong>{{ .connection }}</strong>. Workers: <code>go run . artisan queue:work --queue=default</code> (Supervisor in production).</p>
+<div class="mb-6 grid gap-6 md:grid-cols-2">
+  <div>
+    <h2 class="mb-2 font-semibold">Waiting by queue</h2>
+    {{ template "admin::card-start" . }}<table class="w-full text-left" data-testid="queue-counts">
+      <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">Queue</th><th class="px-4 py-2 text-right">Jobs</th></tr></thead>
+      <tbody class="divide-y divide-slate-200 dark:divide-slate-800">{{ range .queues }}<tr><td class="px-4 py-2"><a href="/admin/queue-watcher/pending?queue={{ .Queue }}" class="underline">{{ .Queue }}</a></td><td class="px-4 py-2 text-right">{{ .Total }}</td></tr>{{ else }}<tr><td colspan="2" class="px-4 py-4 text-center text-slate-500">Nothing waiting.</td></tr>{{ end }}</tbody>
+    </table>{{ template "admin::card-end" . }}
+  </div>
+  <div>
+    <h2 class="mb-2 font-semibold">Job history</h2>
+    {{ template "admin::card-start" . }}<table class="w-full text-left" data-testid="history-counts">
+      <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">Status</th><th class="px-4 py-2 text-right">Runs</th></tr></thead>
+      <tbody class="divide-y divide-slate-200 dark:divide-slate-800">{{ $history := .history }}{{ range .statuses }}<tr><td class="px-4 py-2"><a href="/admin/queue-watcher/jobs?status={{ . }}" class="underline">{{ . }}</a></td><td class="px-4 py-2 text-right">{{ index $history . }}</td></tr>{{ end }}</tbody>
+    </table>{{ template "admin::card-end" . }}
+  </div>
+</div>
+<h2 class="mb-2 font-semibold">Newest runs</h2>
+{{ template "queue-watcher::runs" .recent }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "queue-watcher::runs" }}
+<div class="overflow-x-auto rounded-xl border border-slate-200 bg-white text-sm dark:border-slate-800 dark:bg-slate-900"><table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Job</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Started</th><th class="px-4 py-2">Took</th><th class="px-4 py-2">Error</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+  {{ range . }}
+  <tr data-testid="run-row">
+    <td class="px-4 py-2"><a href="/admin/queue-watcher/jobs/{{ .ID }}" class="underline" data-testid="id-link">{{ .ID }}</a></td>
+    <td class="px-4 py-2">{{ with .JobClass }}{{ . }}{{ end }}</td>
+    <td class="px-4 py-2">{{ template "queue-watcher::status" .Status }}</td>
+    <td class="px-4 py-2 whitespace-nowrap">{{ with .StartedAt }}{{ .Format "2006-01-02 15:04:05" }}{{ end }}</td>
+    <td class="px-4 py-2">{{ .Duration }}</td>
+    <td class="px-4 py-2 text-red-700 dark:text-red-300">{{ with .ExceptionMessage }}{{ . }}{{ end }}</td>
+    <td class="px-4 py-2 text-right"><a href="/admin/queue-watcher/jobs/{{ .ID }}" class="underline">Show</a></td>
+  </tr>
+  {{ else }}<tr><td colspan="7" class="px-4 py-6 text-center text-slate-500">No runs recorded yet.</td></tr>{{ end }}
+  </tbody>
+</table></div>
+{{ end }}
+
+{{ define "queue-watcher::history" }}{{ template "admin::header" . }}
+{{ template "queue-watcher::tabs" . }}
+<form method="get" class="mb-4 flex flex-wrap gap-2 text-sm" data-testid="filters">
+  {{ $status := .filters.status }}
+  <select name="status" class="rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800"><option value="">All statuses</option>{{ range .statuses }}<option value="{{ . }}" {{ if eq . $status }}selected{{ end }}>{{ . }}</option>{{ end }}</select>
+  <input name="q" value="{{ .filters.q }}" placeholder="Job name" class="w-56 rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+  <button class="rounded bg-brand-navy px-3 py-1.5 text-white">Filter</button>
+</form>
+{{ template "queue-watcher::runs" .runs }}
+<div class="mt-3 flex items-center gap-3 text-sm text-slate-500">
+  <span>{{ .total }} run(s)</span>
+  {{ if gt .prev 0 }}<a href="?status={{ .filters.status }}&q={{ .filters.q }}&page={{ .prev }}" class="underline">Previous</a>{{ end }}
+  {{ if .next }}<a href="?status={{ .filters.status }}&q={{ .filters.q }}&page={{ .next }}" class="underline">Next</a>{{ end }}
+</div>
+{{ if call .can "queue.manage" }}
+<div class="mt-4 flex flex-wrap gap-2">
+  <form method="post" action="/admin/queue-watcher/jobs/mark-stale"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="rounded border border-slate-300 px-3 py-1.5 text-sm dark:border-slate-700" data-testid="mark-stale-button">Mark unfinished runs as stale</button></form>
+  <form method="post" action="/admin/queue-watcher/jobs/purge"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="rounded border border-slate-300 px-3 py-1.5 text-sm dark:border-slate-700" data-testid="purge-button">Remove runs older than {{ .retentionDays }} days</button></form>
+</div>
+{{ end }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "queue-watcher::history-show" }}{{ template "admin::header" . }}
+{{ template "admin::card-start" . }}
+<dl class="divide-y divide-slate-200 dark:divide-slate-800">
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Job</dt><dd data-testid="show-job">{{ with .run.JobClass }}{{ . }}{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Status</dt><dd>{{ template "queue-watcher::status" .run.Status }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Connection</dt><dd>{{ with .run.Connection }}{{ . }}{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Started</dt><dd>{{ with .run.StartedAt }}{{ .Format "2006-01-02 15:04:05" }}{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Finished</dt><dd>{{ with .run.FinishedAt }}{{ .Format "2006-01-02 15:04:05" }}{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Took</dt><dd>{{ .run.Duration }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Run id</dt><dd class="font-mono text-xs">{{ .run.JobID }}</dd></div>
+</dl>
+{{ template "admin::card-end" . }}
+{{ with .run.ExceptionMessage }}<h2 class="mb-2 mt-6 font-semibold">Error</h2><pre class="overflow-x-auto whitespace-pre-wrap rounded-xl bg-slate-900 p-4 text-xs text-red-200" data-testid="run-error">{{ . }}</pre>{{ end }}
+{{ if call .can "queue.manage" }}
+<form method="post" action="/admin/queue-watcher/jobs/{{ .run.ID }}/delete" class="mt-6"><input type="hidden" name="_token" value="{{ .csrf }}">
+  <button class="rounded bg-brand-coral px-4 py-2 text-white" data-testid="delete-button">Delete from history</button></form>
+{{ end }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "queue-watcher::pending" }}{{ template "admin::header" . }}
+{{ template "queue-watcher::tabs" . }}
+<form method="get" class="mb-4 flex flex-wrap gap-2 text-sm" data-testid="filters">
+  <input name="queue" value="{{ .queue }}" placeholder="Queue" class="w-40 rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+  <button class="rounded bg-brand-navy px-3 py-1.5 text-white">Filter</button>
+</form>
+{{ template "admin::card-start" . }}
+<table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Job</th><th class="px-4 py-2">Queue</th><th class="px-4 py-2">State</th><th class="px-4 py-2">Attempts</th><th class="px-4 py-2">Available at</th><th class="px-4 py-2">Queued at</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+  {{ range .rows }}
+  <tr data-testid="pending-row">
+    <td class="px-4 py-2"><a href="/admin/queue-watcher/pending/{{ .job.ID }}" class="underline" data-testid="id-link">{{ .job.ID }}</a></td>
+    <td class="px-4 py-2">{{ .payload.Signature }}</td>
+    <td class="px-4 py-2">{{ .job.Queue }}</td>
+    <td class="px-4 py-2">{{ .state }}</td>
+    <td class="px-4 py-2">{{ .job.Attempts }}</td>
+    <td class="px-4 py-2 whitespace-nowrap">{{ .job.AvailableAt.Format "2006-01-02 15:04:05" }}</td>
+    <td class="px-4 py-2 whitespace-nowrap">{{ .job.CreatedAt.Format "2006-01-02 15:04:05" }}</td>
+    <td class="px-4 py-2 text-right"><a href="/admin/queue-watcher/pending/{{ .job.ID }}" class="underline">Show</a></td>
+  </tr>
+  {{ else }}<tr><td colspan="8" class="px-4 py-6 text-center text-slate-500">Nothing is waiting.</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ template "admin::card-end" . }}
+<div class="mt-3 flex items-center gap-3 text-sm text-slate-500">
+  <span>{{ .total }} job(s)</span>
+  {{ if gt .prev 0 }}<a href="?queue={{ .queue }}&page={{ .prev }}" class="underline">Previous</a>{{ end }}
+  {{ if .next }}<a href="?queue={{ .queue }}&page={{ .next }}" class="underline">Next</a>{{ end }}
+</div>
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "queue-watcher::pending-show" }}{{ template "admin::header" . }}
+{{ template "admin::card-start" . }}
+<dl class="divide-y divide-slate-200 dark:divide-slate-800">
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Job</dt><dd data-testid="show-job">{{ .payload.Signature }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Queue</dt><dd>{{ .job.Queue }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">State</dt><dd data-testid="show-state">{{ .state }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Attempts</dt><dd>{{ .job.Attempts }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Available at</dt><dd>{{ .job.AvailableAt.Format "2006-01-02 15:04:05" }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Queued at</dt><dd>{{ .job.CreatedAt.Format "2006-01-02 15:04:05" }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">UUID</dt><dd class="font-mono text-xs">{{ .payload.UUID }}</dd></div>
+  {{ if .payload.ChainLength }}<div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Chained jobs after it</dt><dd>{{ .payload.ChainLength }}</dd></div>{{ end }}
+</dl>
+{{ template "admin::card-end" . }}
+<h2 class="mb-2 mt-6 font-semibold">Arguments</h2>
+<pre class="overflow-x-auto rounded-xl bg-slate-900 p-4 text-xs text-slate-100" data-testid="arguments">{{ .payload.Arguments }}</pre>
+{{ if call .can "queue.manage" }}{{ if ne .state "running" }}
+<form method="post" action="/admin/queue-watcher/pending/{{ .job.ID }}/delete" class="mt-6"><input type="hidden" name="_token" value="{{ .csrf }}">
+  <button class="rounded bg-brand-coral px-4 py-2 text-white" data-testid="delete-button">Delete job</button></form>
+{{ end }}{{ end }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "queue-watcher::failed" }}{{ template "admin::header" . }}
+{{ template "queue-watcher::tabs" . }}
+<form method="get" class="mb-4 flex flex-wrap gap-2 text-sm" data-testid="filters">
+  <input name="queue" value="{{ .queue }}" placeholder="Queue" class="w-40 rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+  <button class="rounded bg-brand-navy px-3 py-1.5 text-white">Filter</button>
+</form>
+{{ template "admin::card-start" . }}
+<table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Job</th><th class="px-4 py-2">Queue</th><th class="px-4 py-2">Failed at</th><th class="px-4 py-2">Error</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+  {{ $root := . }}
+  {{ range .rows }}
+  <tr data-testid="failed-row">
+    <td class="px-4 py-2"><a href="/admin/queue-watcher/failed/{{ .job.ID }}" class="underline" data-testid="id-link">{{ .job.ID }}</a></td>
+    <td class="px-4 py-2">{{ .payload.Signature }}</td>
+    <td class="px-4 py-2">{{ .job.Queue }}</td>
+    <td class="px-4 py-2 whitespace-nowrap">{{ .job.FailedAt.Format "2006-01-02 15:04:05" }}</td>
+    <td class="px-4 py-2 text-red-700 dark:text-red-300">{{ .error }}</td>
+    <td class="px-4 py-2 text-right"><a href="/admin/queue-watcher/failed/{{ .job.ID }}" class="underline">Show</a></td>
+  </tr>
+  {{ else }}<tr><td colspan="6" class="px-4 py-6 text-center text-slate-500">No failed jobs.</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ template "admin::card-end" . }}
+<div class="mt-3 flex items-center gap-3 text-sm text-slate-500">
+  <span>{{ .total }} failed job(s)</span>
+  {{ if gt .prev 0 }}<a href="?queue={{ .queue }}&page={{ .prev }}" class="underline">Previous</a>{{ end }}
+  {{ if .next }}<a href="?queue={{ .queue }}&page={{ .next }}" class="underline">Next</a>{{ end }}
+</div>
+{{ if and (call .can "queue.manage") .total }}
+<div class="mt-4 flex flex-wrap gap-2">
+  <form method="post" action="/admin/queue-watcher/failed/retry-all"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="rounded bg-brand-navy px-3 py-1.5 text-sm text-white" data-testid="retry-all-button">Retry all</button></form>
+  <form method="post" action="/admin/queue-watcher/failed/flush"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="rounded border border-slate-300 px-3 py-1.5 text-sm dark:border-slate-700" data-testid="flush-button">Delete all failed jobs</button></form>
+</div>
+{{ end }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "queue-watcher::failed-show" }}{{ template "admin::header" . }}
+{{ template "admin::card-start" . }}
+<dl class="divide-y divide-slate-200 dark:divide-slate-800">
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Job</dt><dd data-testid="show-job">{{ .payload.Signature }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Queue / connection</dt><dd>{{ .job.Queue }} / {{ .job.Connection }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Failed at</dt><dd>{{ .job.FailedAt.Format "2006-01-02 15:04:05" }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">UUID</dt><dd class="font-mono text-xs">{{ .job.UUID }}</dd></div>
+</dl>
+{{ template "admin::card-end" . }}
+<h2 class="mb-2 mt-6 font-semibold">Error</h2>
+<pre class="overflow-x-auto whitespace-pre-wrap rounded-xl bg-slate-900 p-4 text-xs text-red-200" data-testid="failed-error">{{ .job.Exception }}</pre>
+<h2 class="mb-2 mt-6 font-semibold">Arguments</h2>
+<pre class="overflow-x-auto rounded-xl bg-slate-900 p-4 text-xs text-slate-100" data-testid="arguments">{{ .payload.Arguments }}</pre>
+{{ if call .can "queue.manage" }}
+<div class="mt-6 flex gap-2">
+  <form method="post" action="/admin/queue-watcher/failed/{{ .job.ID }}/retry"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="rounded bg-brand-navy px-4 py-2 text-white" data-testid="retry-button">Retry</button></form>
+  <form method="post" action="/admin/queue-watcher/failed/{{ .job.ID }}/delete"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="rounded bg-brand-coral px-4 py-2 text-white" data-testid="delete-button">Delete</button></form>
+</div>
+{{ end }}
+{{ template "admin::footer" . }}{{ end }}

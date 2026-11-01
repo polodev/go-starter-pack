@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 10 of 30** | [Index](00-index.md) | [Previous: 9 Token API: register, login, me](09-auth-api.md) | [Next: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md)
+**Tutorial 10 of 31** | [Index](00-index.md) | [Previous: 9 Token API: register, login, me](09-auth-api.md) | [Next: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -34,6 +34,7 @@
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
+31. [Queue monitor](31-queue-monitor.md)  
 
 </details>
 <!-- nav:end -->
@@ -79,6 +80,12 @@ err := facades.Queue().Job(&jobs.SendDigest{}, []queue.Arg{{Type: "int", Value: 
 
 `go run .` already runs one worker for the `default` queue inside the web process. Add `queue:work` programs for
 other or busy queues; each job is taken by exactly one worker.
+
+## Watch it in the admin
+
+`/admin/queue-watcher` (permission `queue.view`; retry and delete need `queue.manage`) shows what waits, what runs,
+what failed, and the history of every run. You add nothing to your job: the queue-watcher module wraps every
+registered job at start-up. Tutorial 31 walks through it.
 
 ## What the tests prove
 

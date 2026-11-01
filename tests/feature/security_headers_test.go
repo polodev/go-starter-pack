@@ -95,7 +95,8 @@ func (s *SecurityHeadersTestSuite) TestNoPageHasInlineScriptsOrInlineEventHandle
 	staff.get("/login")
 	response, _ := staff.post("/login", url.Values{"email": {"developer@example.com"}, "password": {"secret-password"}})
 	response.AssertStatus(303)
-	for _, uri := range []string{"/", "/account/profile", "/account/avatar", "/admin", "/admin/users", "/admin/users/" + strconv.Itoa(int(user.ID)) + "/edit", "/admin/role-permissions", "/admin/role-permissions/matrix", "/admin/activity-logs", "/admin/media", "/admin/pages", "/admin/pages/create", "/admin/ai-api-logs"} {
+	for _, uri := range []string{"/", "/account/profile", "/account/avatar", "/admin", "/admin/users", "/admin/users/" + strconv.Itoa(int(user.ID)) + "/edit", "/admin/role-permissions", "/admin/role-permissions/matrix", "/admin/activity-logs", "/admin/media", "/admin/pages", "/admin/pages/create", "/admin/ai-api-logs",
+		"/admin/queue-watcher", "/admin/queue-watcher/jobs", "/admin/queue-watcher/pending", "/admin/queue-watcher/failed"} {
 		s.assertNoInlineCode(staff, uri)
 	}
 }

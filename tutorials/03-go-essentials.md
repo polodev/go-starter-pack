@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 3 of 30** | [Index](00-index.md) | [Previous: 2 Setup](02-setup.md) | [Next: 4 Go tooling jargon](04-go-tooling.md)
+**Tutorial 3 of 31** | [Index](00-index.md) | [Previous: 2 Setup](02-setup.md) | [Next: 4 Go tooling jargon](04-go-tooling.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -34,6 +34,7 @@
 28. [AI service](28-ai-service.md)  
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
+31. [Queue monitor](31-queue-monitor.md)  
 
 </details>
 <!-- nav:end -->
