@@ -4,6 +4,7 @@ go 1.25.0
 
 require (
 	github.com/gin-gonic/gin v1.12.0
+	github.com/google/uuid v1.6.0
 	github.com/goravel/framework v1.18.0
 	github.com/goravel/gin v1.18.0
 	github.com/goravel/minio v1.18.0
@@ -63,7 +64,6 @@ require (
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/goforj/godump v1.9.1 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/gookit/color v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

@@ -44,5 +44,6 @@
   "mail-verify-body": "Please confirm that this is your email address.",
   "mail-verify-button": "Verify email",
   "mail-reset-body": "Someone asked to reset the password of your account. If it was you, choose a new password:",
-  "mail-expires": "This link works once and expires in :minutes minutes. If you did not ask for it, ignore this email."
+  "mail-expires": "This link works once and expires in :minutes minutes. If you did not ask for it, ignore this email.",
+  "profile-change-picture": "Change picture"
 }

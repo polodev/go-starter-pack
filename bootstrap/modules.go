@@ -4,6 +4,7 @@ import (
 	activitylog "goravel/app-modules/activity-log"
 	adminlayout "goravel/app-modules/admin-layout"
 	auth "goravel/app-modules/auth"
+	media "goravel/app-modules/media"
 	rolepermission "goravel/app-modules/role-permission"
 	sitelayout "goravel/app-modules/site-layout"
 	"goravel/app/modular"
@@ -18,6 +19,7 @@ func Modules() []modular.Module {
 		&rolepermission.Module{},
 		&adminlayout.Module{},
 		&activitylog.Module{},
+		&media.Module{},
 		// modules-inject (do not remove)
 	}
 }

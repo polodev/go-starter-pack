@@ -1,0 +1,49 @@
+{{ define "media::avatar" }}{{ template "site::header" . }}
+<div class="mx-auto max-w-md rounded-xl bg-white p-8 shadow-sm dark:bg-slate-900">
+  <h1 class="mb-6 text-2xl font-bold text-brand-navy dark:text-white" data-testid="page-title">{{ .title }}</h1>
+  {{ if .avatarURL }}<img src="{{ .avatarURL }}" alt="" class="mb-4 h-32 w-32 rounded-full object-cover" data-testid="avatar">{{ else }}<p class="mb-4 text-slate-500" data-testid="no-avatar">{{ t .lang "media.avatar-none" }}</p>{{ end }}
+  {{ with .error }}<p class="mb-3 text-sm text-brand-coral" data-testid="upload-error">{{ . }}</p>{{ end }}
+  <form method="post" action="/account/avatar" enctype="multipart/form-data" class="space-y-3" data-testid="avatar-form">
+    <input type="hidden" name="_token" value="{{ .csrf }}">
+    <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" required class="block w-full text-sm">
+    <p class="text-xs text-slate-500">{{ t .lang "media.avatar-help" }}</p>
+    <button class="w-full rounded bg-brand-navy px-4 py-2 font-semibold text-white hover:bg-brand-amber" data-testid="avatar-submit">{{ t .lang "media.avatar-upload" }}</button>
+  </form>
+  {{ if .avatarURL }}
+  <form method="post" action="/account/avatar/delete" class="mt-3"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="text-sm text-brand-coral underline" data-testid="avatar-remove">{{ t .lang "media.avatar-remove" }}</button></form>
+  {{ end }}
+</div>
+{{ template "site::footer" . }}{{ end }}
+
+{{ define "media::admin-index" }}{{ template "admin::header" . }}
+{{ if call .can "media.manage" }}
+<form method="post" action="/admin/media" enctype="multipart/form-data" class="mb-5 flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 text-sm dark:border-slate-800 dark:bg-slate-900" data-testid="upload-form">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <input type="file" name="file" required>
+  <select name="visibility" class="rounded border border-slate-300 px-2 py-1 dark:border-slate-700 dark:bg-slate-800"><option value="private">Private (staff only)</option><option value="public">Public (anyone with the link)</option></select>
+  <button class="rounded bg-brand-navy px-3 py-1.5 text-white">Upload</button>
+</form>
+{{ end }}
+{{ template "admin::card-start" . }}
+<table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">File</th><th class="px-4 py-2">Owner</th><th class="px-4 py-2">Collection</th><th class="px-4 py-2">Type</th><th class="px-4 py-2">Size</th><th class="px-4 py-2">Visibility</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">{{ $urls := .urls }}{{ $can := .can }}{{ $csrf := .csrf }}
+  {{ range .items }}
+  <tr data-testid="media-row">
+    <td class="px-4 py-2"><a href="{{ index $urls .ID }}" class="underline" data-testid="id-link">{{ .ID }}</a></td>
+    <td class="px-4 py-2">{{ .FileName }}</td>
+    <td class="px-4 py-2">{{ .ModelType }} #{{ .ModelID }}</td>
+    <td class="px-4 py-2">{{ .CollectionName }}</td>
+    <td class="px-4 py-2">{{ .Mime }}</td>
+    <td class="px-4 py-2">{{ .KB }} KB</td>
+    <td class="px-4 py-2">{{ if .IsPublic }}public{{ else }}private{{ end }}</td>
+    <td class="px-4 py-2 text-right"><a href="{{ index $urls .ID }}" class="underline">Open</a>{{ if call $can "media.manage" }}
+      <form method="post" action="/admin/media/{{ .ID }}/delete" class="inline"><input type="hidden" name="_token" value="{{ $csrf }}"><button class="ml-2 text-brand-coral underline" data-testid="delete-media">Delete</button></form>{{ end }}</td>
+  </tr>
+  {{ else }}<tr><td colspan="8" class="px-4 py-6 text-center text-slate-500">No files yet.</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ template "admin::card-end" . }}
+<p class="mt-3 text-sm text-slate-500">{{ .total }} file(s)</p>
+{{ template "admin::footer" . }}{{ end }}

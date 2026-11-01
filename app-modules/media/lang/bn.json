@@ -1,0 +1,12 @@
+{
+  "avatar-title": "আপনার ছবি",
+  "avatar-none": "এখনও কোনো ছবি নেই।",
+  "avatar-help": "JPEG, PNG, WebP বা GIF, সর্বোচ্চ ২ MB।",
+  "avatar-upload": "ছবি আপলোড করুন",
+  "avatar-remove": "ছবি সরান",
+  "avatar-saved": "আপনার ছবি সংরক্ষিত হয়েছে।",
+  "avatar-removed": "আপনার ছবি সরানো হয়েছে।",
+  "error-upload": "ফাইলটি আপলোড করা যায়নি। একটি ছবি বেছে নিন।",
+  "error-too-large": "ফাইলটি অনেক বড়।",
+  "error-type": "JPEG, PNG, WebP বা GIF ছবি বেছে নিন।"
+}

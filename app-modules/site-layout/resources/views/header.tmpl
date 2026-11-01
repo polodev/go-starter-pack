@@ -18,7 +18,7 @@
     <div class="flex flex-wrap items-center gap-4 text-sm">
       <a href="/pages/about" class="hover:text-brand-amber">{{ t .lang "site-layout.nav-about" }}</a>
       {{ if .user }}
-        <a href="/account/profile" class="hover:text-brand-amber" data-testid="nav-account">{{ .user.Name }}</a>
+        <a href="/account/profile" class="flex items-center gap-2 hover:text-brand-amber" data-testid="nav-account">{{ if .avatarURL }}<img src="{{ .avatarURL }}" alt="" class="h-6 w-6 rounded-full object-cover">{{ end }}{{ .user.Name }}</a>
         {{ if .canAdmin }}<a href="/admin" class="hover:text-brand-amber" data-testid="nav-admin">{{ t .lang "site-layout.nav-admin" }}</a>{{ end }}
         <form method="post" action="/logout" class="inline">
           <input type="hidden" name="_token" value="{{ .csrf }}">

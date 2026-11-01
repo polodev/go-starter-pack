@@ -1,6 +1,10 @@
 {{ define "auth::profile" }}{{ template "site::header" . }}
 <div class="mx-auto max-w-2xl space-y-6">
-  <h1 class="text-2xl font-bold text-brand-navy dark:text-white" data-testid="page-title">{{ .title }}</h1>
+  <div class="flex items-center gap-4">
+    {{ if .avatarURL }}<img src="{{ .avatarURL }}" alt="" class="h-16 w-16 rounded-full object-cover" data-testid="profile-avatar">{{ end }}
+    <h1 class="text-2xl font-bold text-brand-navy dark:text-white" data-testid="page-title">{{ .title }}</h1>
+    <a href="/account/avatar" class="ml-auto text-sm text-brand-navy underline dark:text-brand-amber" data-testid="change-avatar">{{ t .lang "auth.profile-change-picture" }}</a>
+  </div>
   {{ if not .account.EmailVerifiedAt }}
   <div class="rounded border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200" data-testid="email-not-verified-banner">
     {{ t .lang "auth.profile-not-verified-help" }} <a href="/email/verify" class="underline" data-testid="verify-email-link">{{ t .lang "auth.profile-verify-now" }}</a>

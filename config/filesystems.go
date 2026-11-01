@@ -65,6 +65,21 @@ func init() {
 					return storage.NewR2("r2_public")
 				},
 			},
+			// Private uploads (the media library's private collections): R2_PRIVATE_BUCKET, never publicly readable.
+			"r2_private": map[string]any{
+				"driver":     "custom",
+				"key":        config.Env("R2_ACCESS_KEY_ID"),
+				"secret":     config.Env("R2_SECRET_ACCESS_KEY"),
+				"region":     config.Env("R2_REGION", "auto"),
+				"bucket":     config.Env("R2_PRIVATE_BUCKET"),
+				"url":        privateAddress(config.Env("R2_ENDPOINT"), config.Env("R2_PRIVATE_BUCKET")),
+				"public_url": "", // private: files are served by the app after a permission check
+				"endpoint":   endpointHost(config.Env("R2_ENDPOINT")),
+				"ssl":        true,
+				"via": func() (filesystem.Driver, error) {
+					return storage.NewR2("r2_private")
+				},
+			},
 			// Database backups: a private bucket with its own keys, never publicly readable.
 			"r2_backups": map[string]any{
 				"driver":     "custom",

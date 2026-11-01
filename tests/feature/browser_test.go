@@ -1,6 +1,8 @@
 package feature
 
 import (
+	"bytes"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -80,4 +82,23 @@ func (b *browser) postWithToken(uri string, form url.Values, token string) (cont
 // location is where a redirect points.
 func location(response contractstesting.Response) string {
 	return response.Headers().Get("Location")
+}
+
+// upload sends a multipart form with one file and the CSRF token of the last page.
+func (b *browser) upload(uri, field, fileName string, content []byte, fields url.Values) (contractstesting.Response, string) {
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	_ = writer.WriteField("_token", b.token)
+	for key, values := range fields {
+		for _, value := range values {
+			_ = writer.WriteField(key, value)
+		}
+	}
+	part, _ := writer.CreateFormFile(field, fileName)
+	_, _ = part.Write(content)
+	_ = writer.Close()
+	response, err := b.test.Http(b.t).WithCookies(b.jar()).
+		WithHeader("Content-Type", writer.FormDataContentType()).Post(uri, &body)
+	require.NoError(b.t, err)
+	return response, b.remember(response)
 }
