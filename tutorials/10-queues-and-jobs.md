@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 10 of 18** | [Index](00-index.md) | [Previous: 9 Token API: register, login, me](09-auth-api.md) | [Next: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md)
+**Tutorial 10 of 29** | [Index](00-index.md) | [Previous: 9 Token API: register, login, me](09-auth-api.md) | [Next: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -21,7 +21,18 @@
 15. [Deployment with Supervisor](15-deployment.md)  
 16. [MySQL or PostgreSQL](16-mysql-or-postgresql.md)  
 17. [Conventions](17-conventions.md)  
-18. [Cheat sheet and what to build next](18-cheatsheet-and-next-steps.md)  
+18. [Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md)  
+19. [Modules (app-modules)](19-modules.md)  
+20. [Layouts, pages and translations](20-layouts-and-translations.md)  
+21. [Web login, verification and password reset](21-web-login.md)  
+22. [Roles and permissions](22-roles-and-permissions.md)  
+23. [The admin area](23-admin-area.md)  
+24. [Activity log](24-activity-log.md)  
+25. [Media library](25-media-library.md)  
+26. [Mail](26-mail.md)  
+27. [PDF](27-pdf.md)  
+28. [AI service](28-ai-service.md)  
+29. [Bilingual pages](29-bilingual-pages.md)  
 
 </details>
 <!-- nav:end -->

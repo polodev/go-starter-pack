@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 1 of 18** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
+**Tutorial 1 of 29** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -21,7 +21,18 @@
 15. [Deployment with Supervisor](15-deployment.md)  
 16. [MySQL or PostgreSQL](16-mysql-or-postgresql.md)  
 17. [Conventions](17-conventions.md)  
-18. [Cheat sheet and what to build next](18-cheatsheet-and-next-steps.md)  
+18. [Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md)  
+19. [Modules (app-modules)](19-modules.md)  
+20. [Layouts, pages and translations](20-layouts-and-translations.md)  
+21. [Web login, verification and password reset](21-web-login.md)  
+22. [Roles and permissions](22-roles-and-permissions.md)  
+23. [The admin area](23-admin-area.md)  
+24. [Activity log](24-activity-log.md)  
+25. [Media library](25-media-library.md)  
+26. [Mail](26-mail.md)  
+27. [PDF](27-pdf.md)  
+28. [AI service](28-ai-service.md)  
+29. [Bilingual pages](29-bilingual-pages.md)  
 
 </details>
 <!-- nav:end -->
@@ -39,22 +50,29 @@ language that is quick to learn. Goravel keeps the Laravel vocabulary, so you th
 
 | Part | Laravel equivalent | Tutorial |
 |---|---|---|
+| Modules in `app-modules/` | internachi/modular | [19](19-modules.md) |
+| Layouts, bilingual site, translations | Blade layouts, `__()` | [20](20-layouts-and-translations.md) |
+| Web login, email verification, password reset | Breeze/Fortify | [21](21-web-login.md) |
 | Token API: register, login, me | Sanctum/Passport API | [09](09-auth-api.md) |
+| Roles and permissions | your Laravel apps' role-permission module | [22](22-roles-and-permissions.md) |
+| Admin area: dashboard, users, roles panel | an admin panel | [23](23-admin-area.md) |
+| Activity log | spatie/laravel-activitylog | [24](24-activity-log.md) |
+| Media library | spatie/laravel-medialibrary | [25](25-media-library.md) |
+| Mail through the queue, Amazon SES | `Mail::queue`, SES | [26](26-mail.md) |
+| PDF from HTML | Browsershot / dompdf | [27](27-pdf.md) |
+| AI service and AI API logs | Laravel AI SDK / Prism | [28](28-ai-service.md) |
+| Bilingual pages | a CMS pages table | [29](29-bilingual-pages.md) |
 | Database queue with `failed_jobs` | `QUEUE_CONNECTION=database` | [10](10-queues-and-jobs.md) |
 | Artisan commands and the scheduler | `make:command`, `routes/console.php` | [11](11-console-commands-and-scheduler.md) |
-| Cloudflare R2 public and private disks | `Storage::disk('s3')` | [12](12-files-on-r2.md) |
+| Cloudflare R2 disks | `Storage::disk('s3')` | [12](12-files-on-r2.md) |
 | Database backups to the private bucket | spatie/laravel-backup `--only-db` | [13](13-database-backups.md) |
-| Tests on a separate database, real R2 tests | `php artisan test`, RefreshDatabase | [14](14-testing.md) |
+| Tests on a separate database | `php artisan test`, RefreshDatabase | [14](14-testing.md) |
 | Supervisor deployment | Forge/Supervisor | [15](15-deployment.md) |
-
-Not built yet, but in the Rust starter: web login pages, roles and permissions, the admin dashboard, media library,
-activity log, bilingual pages, mail queue, PDF and the AI service. [Tutorial 18](18-cheatsheet-and-next-steps.md)
-lists them and how to add each one.
 
 ## The three rules
 
 1. **Generate, then edit.** `go run . artisan make:<thing>` writes the file and registers it.
-2. **Use the facades.** `facades.Orm()`, `facades.Queue()`, `facades.Storage()`: the framework already has it.
+2. **Use Goravel's batteries.** `facades.Orm()`, `facades.Queue()`, `facades.Storage()`: the framework already has it.
 3. **Slim controllers.** Handlers parse, validate, call a service or model, and answer.
 
 <!-- foot:start -->

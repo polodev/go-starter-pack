@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 18 of 18** | [Index](00-index.md) | [Previous: 17 Conventions](17-conventions.md) | Next: none
+**Tutorial 18 of 29** | [Index](00-index.md) | [Previous: 17 Conventions](17-conventions.md) | [Next: 19 Modules (app-modules)](19-modules.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -21,12 +21,23 @@
 15. [Deployment with Supervisor](15-deployment.md)  
 16. [MySQL or PostgreSQL](16-mysql-or-postgresql.md)  
 17. [Conventions](17-conventions.md)  
-**18. [Cheat sheet and what to build next](18-cheatsheet-and-next-steps.md)**  
+**18. [Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md)**  
+19. [Modules (app-modules)](19-modules.md)  
+20. [Layouts, pages and translations](20-layouts-and-translations.md)  
+21. [Web login, verification and password reset](21-web-login.md)  
+22. [Roles and permissions](22-roles-and-permissions.md)  
+23. [The admin area](23-admin-area.md)  
+24. [Activity log](24-activity-log.md)  
+25. [Media library](25-media-library.md)  
+26. [Mail](26-mail.md)  
+27. [PDF](27-pdf.md)  
+28. [AI service](28-ai-service.md)  
+29. [Bilingual pages](29-bilingual-pages.md)  
 
 </details>
 <!-- nav:end -->
 
-# 18. Cheat sheet and what to build next
+# 18. Cheat sheet and ideas for next
 
 ## Cheat sheet
 
@@ -48,26 +59,29 @@
 | `php artisan test` | `go test ./... -count=1` |
 | `composer require x` | `go get x` then `go mod tidy` |
 
-## What to build next (the Rust starter has these)
+## Where each Laravel habit lives here
 
-| Feature | Start with |
+| Laravel | Go starter pack |
 |---|---|
-| Web login pages and sessions | `config/session.go`, a session guard in `config/auth.go`, views in `resources/views` |
-| Email verification, password reset, sign-in links | a `user_security_tokens` table, `facades.Mail()`, queued mail |
-| Login throttling | `facades.RateLimiter()` |
-| Roles and permissions | `facades.Gate()` and policies (`make:policy`) |
-| Admin dashboard | a layout template and `/admin` routes behind a permission middleware |
-| Media library (Spatie-compatible) | the `media` table and the `r2_public` disk |
-| Activity log | Spatie's `activity_log` table and an observer (`make:observer`) |
-| Bilingual pages (English, Bangla) | `lang/` files and `facades.Lang(ctx)` |
-| Mail queue and SES | `config/mail.go` and a job per mail |
-| PDF | headless Chrome (chromedp) |
-| AI service | Goravel's AI SDK (`config/ai.go` is already there) |
-| Backup retention and monitor | `backup:clean`, `backup:monitor` next to `backup:run` |
+| `php artisan module:make Shop` | `go run . artisan make:module shop` |
+| `Route::middleware('auth')` | `router.Middleware(&auth.Authenticate{})` |
+| `@can('users.view')` / `Gate::allows` | `{{ if call .can "users.view" }}` / `rolepermission.HasPermission` |
+| `__('auth.login')` | `{{ t .lang "auth.title-login" }}`, `web.T(ctx, "...")` |
+| `activity()->log('...')` | `activity.In("users")...LogQuietly("...")` |
+| `$user->addMedia($file)->toMediaCollection('avatar')` | `media.Add(media.UserOwner(id), "avatar", file)` |
+| `Mail::to($x)->queue($mail)` | `facades.Mail().To(...).Content(...).Queue()` |
+| `Pdf::loadView(...)` | `pdf.FromHTML(html)` |
+| `Prism::text()->...` | `aiservice.Chat(ctx, aiservice.Request{Purpose: ...})` |
 
-Add each the same way: generate, write the test, update `README.md`, `docs/CONVENTIONS.md` and a tutorial.
+## Ideas for next
+
+- More admin resources, made with the checklist in `docs/CONVENTIONS.md`.
+- A contact form (public form with a honeypot, rate limit and an admin inbox), like the Rust starter's.
+- Two-factor sign-in, sign-in links by email, and an admin screen for sent mail.
+- Image conversions (thumbnails) in the media library.
+- Running the test suite on PostgreSQL ([16](16-mysql-or-postgresql.md)).
 
 <!-- foot:start -->
 ---
-[Previous: 17 Conventions](17-conventions.md) | [Index](00-index.md) | Next: none
+[Previous: 17 Conventions](17-conventions.md) | [Index](00-index.md) | [Next: 19 Modules (app-modules)](19-modules.md)
 <!-- foot:end -->

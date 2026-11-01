@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 5 of 18** | [Index](00-index.md) | [Previous: 4 Go tooling jargon](04-go-tooling.md) | [Next: 6 Routes, controllers and views](06-routes-controllers-views.md)
+**Tutorial 5 of 29** | [Index](00-index.md) | [Previous: 4 Go tooling jargon](04-go-tooling.md) | [Next: 6 Routes, controllers and views](06-routes-controllers-views.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -21,7 +21,18 @@
 15. [Deployment with Supervisor](15-deployment.md)  
 16. [MySQL or PostgreSQL](16-mysql-or-postgresql.md)  
 17. [Conventions](17-conventions.md)  
-18. [Cheat sheet and what to build next](18-cheatsheet-and-next-steps.md)  
+18. [Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md)  
+19. [Modules (app-modules)](19-modules.md)  
+20. [Layouts, pages and translations](20-layouts-and-translations.md)  
+21. [Web login, verification and password reset](21-web-login.md)  
+22. [Roles and permissions](22-roles-and-permissions.md)  
+23. [The admin area](23-admin-area.md)  
+24. [Activity log](24-activity-log.md)  
+25. [Media library](25-media-library.md)  
+26. [Mail](26-mail.md)  
+27. [PDF](27-pdf.md)  
+28. [AI service](28-ai-service.md)  
+29. [Bilingual pages](29-bilingual-pages.md)  
 
 </details>
 <!-- nav:end -->
@@ -30,48 +41,53 @@
 
 ```text
 go-starter-pack/
-  main.go                 bootstrap.Boot().Start(): web server, queue worker, scheduler
-  artisan                 shortcut script: ./artisan migrate == go run . artisan migrate
-  bootstrap/
-    app.go                the builder: WithJobs, WithSchedule, WithCommands, WithMigrations, WithRouting ...
-    commands.go jobs.go migrations.go schedule.go providers.go   lists the generators update for you
+  main.go                  bootstrap.Boot().Start(): web server, queue worker, scheduler
+  artisan                  shortcut: ./artisan migrate == go run . artisan migrate
+  app-modules/             the features, one module each (like internachi/modular)
+    site-layout/ auth/ role-permission/ admin-layout/ activity-log/ media/ pdf/ ai-service/ pages/
+      module.go            Name() plus routes, migrations, commands, jobs, schedule, seeders, views, admin menu
+      migrations/ models/  its tables
+      resources/views/     templates named "<module>::<view>"
+      lang/en.json bn.json its translations, read as "<module>.<key>"
   app/
-    facades/              one file per facade (Orm, Queue, Storage, ...)
-    http/controllers/     handlers
-    http/middleware/      middleware types
-    http/responses/       Laravel-shaped JSON answers
-    models/               ORM models
-    services/backup/      domain logic
-    console/commands/     artisan commands
-    jobs/                 queue jobs
-    storage/              the R2 filesystem driver
-  config/                 one file per concern: database.go, queue.go, filesystems.go, backup.go ...
-  database/migrations/    one file per table
-  routes/                 web.go, api.go, grpc.go
-  resources/views/        *.tmpl templates
-  tests/                  test_case.go (boot + test-database guard), feature/*_test.go
-  deploy/supervisor.conf  production processes
-  docs/CONVENTIONS.md     the rules
+    modular/               the module system (Module, Collect, Menu, LangFS)
+    web/                   web middleware group, page data, templates, translation helpers
+    activity/              activity log writer any module can use
+    storage/               the Cloudflare R2 filesystem driver
+    services/backup/       database backups
+    console/commands/      app-wide artisan commands (backup, queue:work, make:module)
+    http/responses/        Laravel-shaped JSON answers
+    models/                User
+    support/               ses (SES SMTP password), aifake (AI provider for tests)
+    facades/               one file per Goravel facade
+  bootstrap/
+    app.go                 the builder: WithJobs, WithSchedule, WithSeeders, WithCommands, WithMigrations, WithRouting ...
+    modules.go             the module list (make:module adds to it)
+    commands.go jobs.go migrations.go schedule.go seeders.go providers.go
+  config/                  one file per concern: database, queue, filesystems, mail, ai, backup ...
+  database/migrations/     app-wide tables (users, jobs, failed_jobs)
+  routes/                  web.go (static files); pages live in their modules
+  resources/css/           Tailwind input; public/css/app.css is the built file
+  tests/                   test_case.go (boot + test-database check), feature/*_test.go
+  deploy/supervisor.conf   production processes
+  docs/CONVENTIONS.md      the rules
 ```
 
 ## How it boots
 
-`bootstrap/app.go` builds the application:
+`bootstrap/app.go` builds the application. Each `With...` gets the app's own items plus every module's:
 
 ```go
 foundation.Setup().
-	WithJobs(Jobs).            // bootstrap/jobs.go
-	WithSchedule(Schedule).    // bootstrap/schedule.go
-	WithCommands(Commands).    // bootstrap/commands.go
-	WithMigrations(Migrations).
-	WithRouting(func() { routes.Web(); routes.Api(); routes.Grpc() }).
-	WithProviders(Providers).
-	WithConfig(config.Boot).
+	WithJobs(Jobs).WithSchedule(Schedule).WithSeeders(Seeders).WithCommands(Commands).WithMigrations(Migrations).
+	WithRouting(func() { routes.Web(); for _, module := range Modules() { module.Routes() } ... }).
+	WithProviders(Providers).WithConfig(config.Boot).
+	WithCallback(bootModules). // registers each module's views
 	Create()
 ```
 
-Go has no autoloading, so a new command, job or migration must be listed in these files. The `make:*` generators do
-that for you.
+Go has no autoloading or package discovery, so new things must be listed. The generators (`make:command`,
+`make:job`, `make:migration`, `make:module`) do it for you.
 
 ## Config
 

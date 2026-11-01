@@ -23,4 +23,15 @@ Start here. Every page has an **Index** link at the top and bottom, plus Previou
 | 15 | [Deployment with Supervisor](15-deployment.md) | Build one binary, run it under Supervisor |
 | 16 | [MySQL or PostgreSQL](16-mysql-or-postgresql.md) | Choosing the database per app |
 | 17 | [Conventions](17-conventions.md) | The rules of this starter pack, short version |
-| 18 | [Cheat sheet and what to build next](18-cheatsheet-and-next-steps.md) | Laravel to Go quick reference and the road ahead |
+| 18 | [Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md) | Laravel to Go quick reference and what to build next |
+| 19 | [Modules (app-modules)](19-modules.md) | internachi/modular in Go: one package per feature, make:module |
+| 20 | [Layouts, pages and translations](20-layouts-and-translations.md) | site::header, web.View, the web group, English and Bangla |
+| 21 | [Web login, verification and password reset](21-web-login.md) | Goravel's session guard, auth middleware, email links |
+| 22 | [Roles and permissions](22-roles-and-permissions.md) | Your Laravel apps' model: five roles, sync, fail-closed admin routes |
+| 23 | [The admin area](23-admin-area.md) | Shell, sidebar, dashboard, users and the roles panel |
+| 24 | [Activity log](24-activity-log.md) | Spatie activitylog in Go: who changed what |
+| 25 | [Media library](25-media-library.md) | Spatie medialibrary in Go: collections, avatars, private files, R2 |
+| 26 | [Mail](26-mail.md) | Goravel's mail, queued; Mailpit locally; Amazon SES |
+| 27 | [PDF](27-pdf.md) | HTML and CSS to PDF with headless Chrome |
+| 28 | [AI service](28-ai-service.md) | Claude, OpenAI and Gemini through Goravel's AI SDK, with AI API logs |
+| 29 | [Bilingual pages](29-bilingual-pages.md) | Pages in English and Bangla with per-part fallback |

@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 9 of 18** | [Index](00-index.md) | [Previous: 8 Validation and JSON responses](08-validation-and-json.md) | [Next: 10 Queues and jobs](10-queues-and-jobs.md)
+**Tutorial 9 of 29** | [Index](00-index.md) | [Previous: 8 Validation and JSON responses](08-validation-and-json.md) | [Next: 10 Queues and jobs](10-queues-and-jobs.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -21,7 +21,18 @@
 15. [Deployment with Supervisor](15-deployment.md)  
 16. [MySQL or PostgreSQL](16-mysql-or-postgresql.md)  
 17. [Conventions](17-conventions.md)  
-18. [Cheat sheet and what to build next](18-cheatsheet-and-next-steps.md)  
+18. [Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md)  
+19. [Modules (app-modules)](19-modules.md)  
+20. [Layouts, pages and translations](20-layouts-and-translations.md)  
+21. [Web login, verification and password reset](21-web-login.md)  
+22. [Roles and permissions](22-roles-and-permissions.md)  
+23. [The admin area](23-admin-area.md)  
+24. [Activity log](24-activity-log.md)  
+25. [Media library](25-media-library.md)  
+26. [Mail](26-mail.md)  
+27. [PDF](27-pdf.md)  
+28. [AI service](28-ai-service.md)  
+29. [Bilingual pages](29-bilingual-pages.md)  
 
 </details>
 <!-- nav:end -->
@@ -43,9 +54,9 @@ curl -s localhost:3200/api/v1/auth/me -H "Authorization: Bearer <token>"
 
 | Piece | File |
 |---|---|
-| routes | `routes/api.go` |
-| handlers | `app/http/controllers/auth_controller.go` |
-| bearer check | `app/http/middleware/authenticate.go` |
+| routes | `app-modules/auth/module.go` |
+| handlers | `app-modules/auth/api.go` |
+| bearer check | `app-modules/auth/api_middleware.go` (`ApiAuthenticate`, guard `api`) |
 | user | `app/models/user.go`, table `users` (Laravel's columns) |
 
 **Security choices:**
@@ -56,11 +67,10 @@ curl -s localhost:3200/api/v1/auth/me -H "Authorization: Bearer <token>"
   with their old passwords.
 - Tokens are JWTs signed with `JWT_SECRET` (`config/jwt.go` sets their lifetime).
 
-**Protect your own route:** `router.Middleware(&middleware.Authenticate{}).Get("/orders", orders.Index)`, then
-`facades.Auth(ctx).User(&user)` inside the handler.
+**Protect your own route:** `router.Middleware(&auth.ApiAuthenticate{}).Get("/orders", orders.Index)`, then
+`facades.Auth(ctx).Guard("api").User(&user)` inside the handler.
 
-Not yet: throttling failed logins, web login pages with sessions, email verification and password reset (the Rust
-starter has all of them).
+Web pages with sessions, email verification and password reset are in [tutorial 21](21-web-login.md).
 
 <!-- foot:start -->
 ---
