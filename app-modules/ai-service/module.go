@@ -24,10 +24,15 @@ func (m *Module) Name() string      { return "ai-service" }
 func (m *Module) ViewsPath() string { return "app-modules/ai-service/resources/views" }
 
 func (m *Module) Migrations() []schema.Migration {
-	return []schema.Migration{&migrations.M20261101180000CreateAiApiLogsTable{}}
+	return []schema.Migration{
+		&migrations.M20261101180000CreateAiApiLogsTable{},
+		&migrations.M20261102100000AddKindToAiApiLogsTable{},
+	}
 }
 
-func (m *Module) Commands() []console.Command { return []console.Command{&PurgeCommand{}} }
+func (m *Module) Commands() []console.Command {
+	return []console.Command{&PurgeCommand{}, &TryTextCommand{}, &TryImageCommand{}}
+}
 
 func (m *Module) Schedule() []contractsschedule.Event {
 	return []contractsschedule.Event{facades.Schedule().Command("ai-service:purge-ai-api-logs").DailyAt("02:30").OnOneServer()}

@@ -129,7 +129,8 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
 - Mail: Goravel's `facades.Mail()`, queued with `.Queue()`. Locally a catcher (Mailpit); `MAIL_MAILER=ses` for SES.
   Mail text uses translation keys; never put secrets that are not needed in an email.
 - PDF: `pdf.FromHTML(html)`; page size and margins in CSS `@page`. Money in minor units (`pdf.Money`), never floats.
-- AI: only through `aiservice.Chat` / `aiservice.JSON`, always with a `Purpose`; `Sensitive: true` for anything about
+- AI: only through `aiservice.Chat` / `aiservice.JSON` / `aiservice.Image`, always with a `Purpose`; pictures are never
+  stored in the AI API logs; `Sensitive: true` for anything about
   a person. Keys and models in `.env`. A model's reply is input, not truth: check the fields.
 
 ## Queue, commands and the scheduler

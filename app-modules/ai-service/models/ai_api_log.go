@@ -12,6 +12,7 @@ const (
 // AiApiLog is one call to an AI provider.
 type AiApiLog struct {
 	orm.Model
+	Kind         string   `json:"kind"` // text or image
 	Provider     string   `json:"provider"`
 	ModelName    string   `gorm:"column:model" json:"model"`
 	Purpose      string   `json:"purpose"`

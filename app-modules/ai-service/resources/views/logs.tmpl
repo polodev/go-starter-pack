@@ -10,18 +10,18 @@
 <p class="mb-3 text-sm text-slate-500" data-testid="spent">Estimated cost, last 30 days: {{ if .hasSpent }}${{ printf "%.4f" .spent }}{{ else }}no prices set (AI_PRICES){{ end }}</p>
 {{ template "admin::card-start" . }}
 <table class="w-full text-left">
-  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">When</th><th class="px-4 py-2">Provider</th><th class="px-4 py-2">Model</th><th class="px-4 py-2">Purpose</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Tokens in/out</th><th class="px-4 py-2">Time</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">When</th><th class="px-4 py-2">Kind</th><th class="px-4 py-2">Provider</th><th class="px-4 py-2">Model</th><th class="px-4 py-2">Purpose</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Tokens in/out</th><th class="px-4 py-2">Time</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
   <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
   {{ range .logs }}
   <tr data-testid="ai-log-row">
     <td class="px-4 py-2"><a href="/admin/ai-api-logs/{{ .ID }}" class="underline" data-testid="id-link">{{ .ID }}</a></td>
     <td class="px-4 py-2 whitespace-nowrap">{{ .CreatedAt }}</td>
-    <td class="px-4 py-2">{{ .Provider }}</td><td class="px-4 py-2">{{ .ModelName }}</td><td class="px-4 py-2">{{ .Purpose }}</td>
+    <td class="px-4 py-2">{{ .Kind }}</td><td class="px-4 py-2">{{ .Provider }}</td><td class="px-4 py-2">{{ .ModelName }}</td><td class="px-4 py-2">{{ .Purpose }}</td>
     <td class="px-4 py-2">{{ if eq .Status "failed" }}<span class="text-brand-coral">failed</span>{{ else }}success{{ end }}{{ if .Sensitive }} <span class="text-xs text-slate-500">(sensitive)</span>{{ end }}</td>
     <td class="px-4 py-2">{{ .InputTokens }} / {{ .OutputTokens }}</td><td class="px-4 py-2">{{ .DurationMs }} ms</td>
     <td class="px-4 py-2 text-right"><a href="/admin/ai-api-logs/{{ .ID }}" class="underline">Show</a></td>
   </tr>
-  {{ else }}<tr><td colspan="9" class="px-4 py-6 text-center text-slate-500">No AI calls yet.</td></tr>{{ end }}
+  {{ else }}<tr><td colspan="10" class="px-4 py-6 text-center text-slate-500">No AI calls yet.</td></tr>{{ end }}
   </tbody>
 </table>
 {{ template "admin::card-end" . }}
@@ -32,6 +32,7 @@
 {{ template "admin::card-start" . }}
 <dl class="divide-y divide-slate-200 dark:divide-slate-800">
   <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">When</dt><dd>{{ .row.CreatedAt }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Kind</dt><dd>{{ .row.Kind }}</dd></div>
   <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Provider / model</dt><dd>{{ .row.Provider }} / {{ .row.ModelName }}</dd></div>
   <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Purpose</dt><dd data-testid="show-purpose">{{ .row.Purpose }}</dd></div>
   <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Status</dt><dd>{{ .row.Status }}</dd></div>

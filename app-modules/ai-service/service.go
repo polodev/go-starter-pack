@@ -112,7 +112,7 @@ func (l *callLogger) record(model string, started time.Time, response contractsa
 		model = facades.Config().GetString("ai.providers." + l.provider + ".models.text.default")
 	}
 	row := models.AiApiLog{
-		Provider: l.provider, ModelName: model, Purpose: truncate(l.request.Purpose, 100), Status: models.Success,
+		Kind: "text", Provider: l.provider, ModelName: model, Purpose: truncate(l.request.Purpose, 100), Status: models.Success,
 		DurationMs: uint(time.Since(started).Milliseconds()), Sensitive: l.request.Sensitive,
 	}
 	if response != nil && response.Usage() != nil {

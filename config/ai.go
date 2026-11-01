@@ -38,7 +38,7 @@ func init() {
 						"default": "",
 					},
 					"image": map[string]any{
-						"default": "",
+						"default": config.Env("OPENAI_IMAGE_MODEL", ""),
 					},
 				},
 				"failover": map[string][]string{},
@@ -90,7 +90,7 @@ func init() {
 	if support.RuntimeMode == support.RuntimeTest {
 		config.Add("ai.providers.fake", map[string]any{
 			"key":    "test",
-			"models": map[string]any{"text": map[string]any{"default": "fake-model-1"}},
+			"models": map[string]any{"text": map[string]any{"default": "fake-model-1"}, "image": map[string]any{"default": "fake-image-1"}},
 			"via":    func() (ai.Provider, error) { return aifake.Provider{}, nil },
 		})
 	}

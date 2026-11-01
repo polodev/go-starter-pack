@@ -55,6 +55,7 @@ func (s *AiServiceTestSuite) TestACallIsAnsweredAndLoggedWithTokensAndCost() {
 
 	row := s.lastLog()
 	s.Equal(result.LogID, row.ID)
+	s.Equal("text", row.Kind)
 	s.Equal("fake", row.Provider)
 	s.Equal("fake-model-1", row.ModelName)
 	s.Equal("greet the visitor", row.Purpose)
@@ -104,6 +105,28 @@ func (s *AiServiceTestSuite) TestJSONRepliesAreDecodedAndCheckedForShape() {
 	aifake.Reply("Sorry, I cannot help.")
 	_, err = aiservice.JSON(context.Background(), aiservice.Request{Purpose: "extract person", Provider: "fake", Input: "?"}, &person)
 	s.Error(err, "prose instead of JSON is an error, not a silent empty value")
+}
+
+func (s *AiServiceTestSuite) TestAnImageIsGeneratedAndLoggedWithoutThePicture() {
+	result, err := aiservice.Image(context.Background(), aiservice.ImageRequest{
+		Purpose: "draw the logo", Provider: "fake", Prompt: "a friendly gopher",
+	})
+	s.Require().NoError(err)
+	s.Equal(aifake.PNG, result.Bytes)
+	s.Equal("image/png", result.MimeType)
+	row := s.lastLog()
+	s.Equal(result.LogID, row.ID)
+	s.Equal("image", row.Kind)
+	s.Equal("fake-image-1", row.ModelName)
+	s.Equal("a friendly gopher", models.Text(row.Prompt), "the prompt is kept")
+	s.Nil(row.Response, "the picture is never stored in the log")
+
+	_, err = aiservice.Image(context.Background(), aiservice.ImageRequest{Purpose: "draw", Provider: "fake", Prompt: "FAIL please"})
+	s.Error(err)
+	s.Equal(models.Failed, s.lastLog().Status)
+
+	_, err = aiservice.Image(context.Background(), aiservice.ImageRequest{Provider: "fake", Prompt: "no purpose"})
+	s.Error(err, "every call needs a purpose")
 }
 
 func (s *AiServiceTestSuite) TestTheAiApiLogScreens() {

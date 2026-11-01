@@ -50,8 +50,32 @@ var person struct{ Name string `json:"name"`; Age int `json:"age"` }
 _, err = aiservice.JSON(ctx, aiservice.Request{Purpose: "read ID card", Input: text, Sensitive: true}, &person)
 ```
 
+## Pictures
+
+```go
+picture, err := aiservice.Image(ctx, aiservice.ImageRequest{
+	Purpose: "product illustration", Prompt: "a red bicycle on a white background",
+	Size: contractsai.ImageSizeLandscape, Quality: contractsai.ImageQualityMedium,
+})
+item, err := media.AddBytes(media.Owner{Type: "product", ID: "7"}, "photos", "bicycle.png", picture.MimeType, picture.Bytes)
+```
+
+The call is logged with kind `image` and its prompt; the picture itself is never stored in the log.
+
+## Try it
+
+```sh
+go run . artisan ai-service:try-text  --prompt="Say hello in Bangla"
+go run . artisan ai-service:try-image --prompt="A gopher and an elephant building a website" --output=storage/app/ai-image.png
+```
+
+Both are real calls on your key (paid). Find the model names your key may use with
+`curl -s https://api.openai.com/v1/models -H "Authorization: Bearer $OPENAI_API_KEY"`.
+
+## Details
+
 - **Providers** are Goravel's packages, set in `.env`: `AI_PROVIDER` (anthropic, openai, gemini), the keys and
-  `CLAUDE_MODEL`, `OPENAI_MODEL`, `GEMINI_MODEL`. `Request.Provider` and `Request.Model` override per call.
+  `CLAUDE_MODEL`, `OPENAI_MODEL`, `GEMINI_MODEL`, and `OPENAI_IMAGE_MODEL` for pictures. `Request.Provider` and `Request.Model` override per call.
 - **AI API logs:** every call is recorded by a Goravel AI middleware: provider, model, purpose, status, tokens,
   duration and estimated cost. Prices come from `AI_PRICES` (USD per million tokens); without them the cost stays empty
   rather than wrong.
