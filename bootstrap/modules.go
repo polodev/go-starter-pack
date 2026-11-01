@@ -6,6 +6,7 @@ import (
 	aiservice "goravel/app-modules/ai-service"
 	auth "goravel/app-modules/auth"
 	media "goravel/app-modules/media"
+	pages "goravel/app-modules/pages"
 	pdf "goravel/app-modules/pdf"
 	rolepermission "goravel/app-modules/role-permission"
 	sitelayout "goravel/app-modules/site-layout"
@@ -24,6 +25,7 @@ func Modules() []modular.Module {
 		&media.Module{},
 		&pdf.Module{},
 		&aiservice.Module{},
+		&pages.Module{},
 		// modules-inject (do not remove)
 	}
 }

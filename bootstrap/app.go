@@ -16,6 +16,7 @@ func Boot() contractsfoundation.Application {
 	return foundation.Setup().
 		WithJobs(Jobs).
 		WithSchedule(Schedule).
+		WithSeeders(Seeders).
 		WithCommands(Commands).
 		WithMigrations(Migrations).
 		WithRouting(func() {

@@ -1,0 +1,67 @@
+{{ define "pages::show" }}{{ template "site::header" . }}
+<article class="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow-sm dark:bg-slate-900">
+  <h1 class="text-3xl font-bold text-brand-navy dark:text-white" data-testid="page-heading">{{ .content.Title }}</h1>
+  {{ with .content.Description }}<p class="mt-2 text-slate-500" data-testid="page-description">{{ . }}</p>{{ end }}
+  {{ if .content.Fallback }}<p class="mt-3 rounded bg-amber-50 px-3 py-1 text-xs text-amber-800 dark:bg-amber-950 dark:text-amber-200" data-testid="fallback-note">{{ t .lang "pages.fallback" }}</p>{{ end }}
+  <div class="page-body mt-6" data-testid="page-body">{{ .content.Body }}</div>
+</article>
+{{ template "site::footer" . }}{{ end }}
+
+{{ define "pages::admin-index" }}{{ template "admin::header" . }}
+{{ if call .can "pages.manage" }}<a href="/admin/pages/create" class="mb-4 inline-block rounded bg-brand-navy px-4 py-2 text-white" data-testid="new-page">New page</a>{{ end }}
+{{ template "admin::card-start" . }}
+<table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Title</th><th class="px-4 py-2">Address</th><th class="px-4 py-2">Languages</th><th class="px-4 py-2">Published</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">{{ $titles := .titles }}{{ $languages := .languages }}{{ $can := .can }}
+  {{ range .pages }}<tr data-testid="page-row">
+    <td class="px-4 py-2"><a href="/admin/pages/{{ .ID }}" class="underline" data-testid="id-link">{{ .ID }}</a></td>
+    <td class="px-4 py-2">{{ index $titles .ID }}</td>
+    <td class="px-4 py-2"><a href="/pages/{{ .Slug }}" class="underline">/pages/{{ .Slug }}</a></td>
+    <td class="px-4 py-2">{{ index $languages .ID }}</td>
+    <td class="px-4 py-2">{{ if .IsPublished }}yes{{ else }}draft{{ end }}</td>
+    <td class="px-4 py-2 text-right"><a href="/admin/pages/{{ .ID }}" class="underline">Show</a>{{ if call $can "pages.manage" }} · <a href="/admin/pages/{{ .ID }}/edit" class="underline" data-testid="edit-link">Edit</a>{{ end }}</td>
+  </tr>{{ else }}<tr><td colspan="6" class="px-4 py-6 text-center text-slate-500">No pages. Run db:seed or add one.</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ template "admin::card-end" . }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "pages::admin-show" }}{{ template "admin::header" . }}
+<p class="mb-4 text-sm text-slate-500">Address: <a href="/pages/{{ .page.Slug }}" class="underline">/pages/{{ .page.Slug }}</a> · {{ if .page.IsPublished }}published{{ else }}draft{{ end }}</p>
+<div class="grid gap-4 lg:grid-cols-2">
+  {{ range $locale, $text := .texts }}
+  <div class="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900" data-testid="text-{{ $locale }}">
+    <p class="mb-2 text-xs font-semibold uppercase text-slate-500">{{ $locale }}</p>
+    <h2 class="text-lg font-semibold">{{ $text.Title }}</h2>
+    <p class="text-sm text-slate-500">{{ $text.Description }}</p>
+    <pre class="mt-3 whitespace-pre-wrap text-xs">{{ $text.Body }}</pre>
+  </div>
+  {{ end }}
+</div>
+{{ if call .can "pages.manage" }}<a href="/admin/pages/{{ .page.ID }}/edit" class="mt-4 inline-block rounded bg-brand-navy px-4 py-2 text-white" data-testid="edit-button">Edit</a>{{ end }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "pages::admin-edit" }}{{ template "admin::header" . }}
+<form method="post" action="{{ if .page.ID }}/admin/pages/{{ .page.ID }}{{ else }}/admin/pages{{ end }}" class="max-w-4xl space-y-5" data-testid="page-form">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <div class="grid gap-4 sm:grid-cols-3">
+    <label class="block text-sm sm:col-span-2">Address (/pages/…)
+      <input name="slug" value="{{ .page.Slug }}" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-800"></label>
+    <label class="block text-sm">Order
+      <input name="sort_order" type="number" value="{{ .page.SortOrder }}" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-800"></label>
+  </div>
+  {{ with .errors.slug }}<p class="text-sm text-brand-coral" data-testid="error-slug">{{ . }}</p>{{ end }}
+  <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_published" value="1" {{ if .page.IsPublished }}checked{{ end }}> Published</label>
+  {{ with .errors.en }}<p class="text-sm text-brand-coral" data-testid="error-en">{{ . }}</p>{{ end }}
+  {{ $texts := .texts }}
+  {{ range .locales }}{{ $text := index $texts . }}
+  <fieldset class="rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+    <legend class="px-1 text-sm font-semibold">{{ if eq . "en" }}English (required){{ else }}{{ upper . }} (optional: empty parts show the English){{ end }}</legend>
+    <label class="block text-sm">Title<input name="title_{{ . }}" value="{{ $text.Title }}" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-800"></label>
+    <label class="mt-3 block text-sm">Description<input name="description_{{ . }}" value="{{ $text.Description }}" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-800"></label>
+    <label class="mt-3 block text-sm">Text (HTML: headings, lists, links)<textarea name="body_{{ . }}" rows="8" class="mt-1 w-full rounded border border-slate-300 px-3 py-2 font-mono text-xs dark:border-slate-700 dark:bg-slate-800">{{ $text.Body }}</textarea></label>
+  </fieldset>
+  {{ end }}
+  <button class="rounded bg-brand-navy px-4 py-2 font-semibold text-white" data-testid="save-page">Save</button>
+</form>
+{{ template "admin::footer" . }}{{ end }}
