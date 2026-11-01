@@ -1,0 +1,7 @@
+{
+  "continue-with-google": "Google দিয়ে চালিয়ে যান",
+  "status-google-unavailable": "এই সাইটে Google দিয়ে সাইন ইন চালু করা হয়নি।",
+  "status-google-failed": "Google দিয়ে সাইন ইন করা যায়নি। আবার চেষ্টা করুন।",
+  "status-google-email-unverified": "Google এই ইমেইল ঠিকানা যাচাই করেনি, তাই আমরা এটি ব্যবহার করতে পারছি না।",
+  "status-google-no-account": "এই Google ইমেইলে কোনো অ্যাকাউন্ট নেই। আগে নিবন্ধন করুন।"
+}

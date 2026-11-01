@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 9 of 32** | [Index](00-index.md) | [Previous: 8 Validation and JSON responses](08-validation-and-json.md) | [Next: 10 Queues and jobs](10-queues-and-jobs.md)
+**Tutorial 9 of 33** | [Index](00-index.md) | [Previous: 8 Validation and JSON responses](08-validation-and-json.md) | [Next: 10 Queues and jobs](10-queues-and-jobs.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -36,6 +36,7 @@
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
 32. [Contact form](32-contact-form.md)  
+33. [Sign in with Google](33-sign-in-with-google.md)  
 
 </details>
 <!-- nav:end -->

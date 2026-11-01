@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 1 of 32** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
+**Tutorial 1 of 33** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -36,6 +36,7 @@
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
 32. [Contact form](32-contact-form.md)  
+33. [Sign in with Google](33-sign-in-with-google.md)  
 
 </details>
 <!-- nav:end -->
@@ -55,7 +56,8 @@ language that is quick to learn. Goravel keeps the Laravel vocabulary, so you th
 |---|---|---|
 | Modules in `app-modules/` | internachi/modular | [19](19-modules.md) |
 | Layouts, bilingual site, translations | Blade layouts, `__()` | [20](20-layouts-and-translations.md) |
-| Web login, email verification, password reset | Breeze/Fortify | [21](21-web-login.md) |
+| Web login, email verification, password reset, sign-in links | Breeze/Fortify | [21](21-web-login.md) |
+| Sign in with Google (web and API) | Laravel Socialite | [33](33-sign-in-with-google.md) |
 | Token API: register, login, me | Sanctum/Passport API | [09](09-auth-api.md) |
 | Roles and permissions | your Laravel apps' role-permission module | [22](22-roles-and-permissions.md) |
 | Admin area: dashboard, users, roles panel | an admin panel | [23](23-admin-area.md) |

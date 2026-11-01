@@ -38,3 +38,4 @@ Start here. Every page has an **Index** link at the top and bottom, plus Previou
 | 30 | [Security headers](30-security-headers.md) | CSP, no framing, HSTS: one global middleware, no inline scripts |
 | 31 | [Queue monitor](31-queue-monitor.md) | Every job run recorded; pending and failed jobs; retry and delete in the admin |
 | 32 | [Contact form](32-contact-form.md) | A public form done properly: CSRF, honeypot, rate limit, validation, both languages, inbox |
+| 33 | [Sign in with Google](33-sign-in-with-google.md) | Socialite's Google driver in Go: state, PKCE, account linking, the API for mobile apps |

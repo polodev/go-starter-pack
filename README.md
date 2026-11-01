@@ -12,6 +12,7 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
 - [x] **Web login** with Goravel's session guard: register, login, logout, email verification, password reset,
       sign-in links by email, profile; CSRF on every form; login throttling; Laravel's `auth`, `verified` and `guest` middleware
 - [x] **Token API** under `/api/v1/auth` (JWT guard) with Laravel's JSON shapes
+- [x] **Sign in with Google** for the website (state, PKCE) and the API (ID tokens from mobile apps)
 - [x] **Roles and permissions** (the Laravel apps' model): permissions and five ranked roles defined in code and synced,
       one role per person plus direct exceptions, wildcards, admin routes that fail closed, Goravel's Gate wired in
 - [x] **Admin area**: sidebar from every module shown by permission, dashboard, users, the six-part roles panel
@@ -33,7 +34,8 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
 | Module | Owns |
 |---|---|
 | `site-layout` | public layout (header, footer, language and theme switch), home page, error page |
-| `auth` | web login and registration, email verification, password reset, profile, token API |
+| `auth` | web login and registration, email verification, password reset, sign-in links, profile, token API |
+| `social-auth` | sign in with Google for the website and the API (Socialite's idea) |
 | `role-permission` | roles, permissions, assignments, fail-closed admin routes, `role-permission:sync` |
 | `admin-layout` | admin shell, dashboard, user screens, roles and permissions panel |
 | `activity-log` | Spatie `activity_log` screens and cleaning (writer: `app/activity`) |

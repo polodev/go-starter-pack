@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 21 of 32** | [Index](00-index.md) | [Previous: 20 Layouts, pages and translations](20-layouts-and-translations.md) | [Next: 22 Roles and permissions](22-roles-and-permissions.md)
+**Tutorial 21 of 33** | [Index](00-index.md) | [Previous: 20 Layouts, pages and translations](20-layouts-and-translations.md) | [Next: 22 Roles and permissions](22-roles-and-permissions.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -36,6 +36,7 @@
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
 32. [Contact form](32-contact-form.md)  
+33. [Sign in with Google](33-sign-in-with-google.md)  
 
 </details>
 <!-- nav:end -->

@@ -10,16 +10,24 @@ import (
 	"goravel/app/web"
 )
 
-// Feedback shown after a redirect: ?status=<key> maps to the text auth.status-<key>. Only these keys are allowed,
-// so a link cannot put free text on the page.
-var statusKeys = map[string]bool{
-	"registered": true, "verified": true, "verification-sent": true, "reset-link-sent": true,
-	"password-reset": true, "logged-out": true, "link-invalid": true, "sign-in-link-sent": true,
+// Feedback shown after a redirect: ?status=<key> maps to a translation key. Only these keys are allowed, so a link
+// cannot put free text on the page.
+var statusKeys = map[string]string{}
+
+func init() {
+	for _, key := range []string{"registered", "verified", "verification-sent", "reset-link-sent", "password-reset",
+		"logged-out", "link-invalid", "sign-in-link-sent"} {
+		statusKeys[key] = "auth.status-" + key
+	}
 }
 
+// AddLoginStatus lets another module put a message on the auth pages with ?status=<key> (social-auth's "Google
+// did not work"). Call it while registering routes.
+func AddLoginStatus(key, translationKey string) { statusKeys[key] = translationKey }
+
 func status(ctx http.Context) string {
-	if key := ctx.Request().Query("status"); statusKeys[key] {
-		return web.T(ctx, "auth.status-"+key)
+	if translationKey, ok := statusKeys[ctx.Request().Query("status")]; ok {
+		return web.T(ctx, translationKey)
 	}
 	return ""
 }

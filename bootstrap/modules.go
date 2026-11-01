@@ -12,6 +12,7 @@ import (
 	queuewatcher "goravel/app-modules/queue-watcher"
 	rolepermission "goravel/app-modules/role-permission"
 	sitelayout "goravel/app-modules/site-layout"
+	socialauth "goravel/app-modules/social-auth"
 	"goravel/app/modular"
 )
 
@@ -30,6 +31,7 @@ func Modules() []modular.Module {
 		&pages.Module{},
 		&queuewatcher.Module{},
 		&contact.Module{},
+		&socialauth.Module{},
 		// modules-inject (do not remove)
 	}
 }

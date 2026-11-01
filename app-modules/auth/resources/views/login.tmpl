@@ -11,6 +11,9 @@
   </label>
   <button class="{{ template "auth::button-class" }}" data-testid="login-submit">{{ t .lang "auth.login-button" }}</button>
 </form>
+{{ if .googleSignIn }}
+<a href="/auth/google/redirect" class="mt-4 flex w-full items-center justify-center gap-2 rounded border border-slate-300 px-4 py-2 font-semibold hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800" data-testid="google-sign-in">{{ t .lang "social-auth.continue-with-google" }}</a>
+{{ end }}
 <div class="mt-4 flex justify-between text-sm">
   <a href="/forgot-password" class="text-brand-navy underline dark:text-brand-amber" data-testid="forgot-link">{{ t .lang "auth.forgot-link" }}</a>
   <a href="/login/email-link" class="text-brand-navy underline dark:text-brand-amber" data-testid="email-link-link">{{ t .lang "auth.email-link-link" }}</a>

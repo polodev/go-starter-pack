@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 19 of 32** | [Index](00-index.md) | [Previous: 18 Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md) | [Next: 20 Layouts, pages and translations](20-layouts-and-translations.md)
+**Tutorial 19 of 33** | [Index](00-index.md) | [Previous: 18 Cheat sheet and ideas for next](18-cheatsheet-and-next-steps.md) | [Next: 20 Layouts, pages and translations](20-layouts-and-translations.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -36,6 +36,7 @@
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
 32. [Contact form](32-contact-form.md)  
+33. [Sign in with Google](33-sign-in-with-google.md)  
 
 </details>
 <!-- nav:end -->

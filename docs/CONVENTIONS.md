@@ -34,7 +34,7 @@ app-modules/<name>/
 - `go run . artisan make:module <kebab-name>` creates one and registers it in `bootstrap/modules.go`.
 - A module offers routes (`HasRoutes`), migrations, commands, jobs, schedules, seeders, views, admin menu items, and a
   `Boot()` that runs once after everything is registered (`HasBoot`, Laravel's `ServiceProvider::boot`).
-- Dependency direction, no cycles: `site-layout`, `auth` < `role-permission` < `admin-layout` < modules with admin
+- Dependency direction, no cycles: `site-layout`, `auth` < `social-auth`; `auth` < `role-permission` < `admin-layout` < modules with admin
   screens (`activity-log`, `media`, `pages`, `ai-service`, `queue-watcher`, `contact`). Shared writers that low modules need live in `app/`
   (`app/activity`), never in a module.
 - App-wide code: `app/modular` (module system), `app/web` (web group, page data, templates, translation helpers),
@@ -97,6 +97,8 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
 - Login: Goravel session guard (`Guard("web")`), throttled with the rate limiter; unknown email and wrong password give
   the same answer. Email links: random secret, only its SHA-256 stored, single use, expiring; a link that signs in
   opens a page with a button (a POST uses it), so mail scanners cannot use it up.
+- Outside services' settings go in `config/services.go` (Laravel's `config/services.php`), keys from `.env`. Sign in
+  with Google needs a Google-verified email, `state` and PKCE; tests talk to a fake service (`httptest`), never the real one.
 - Middleware that stops a request answers with `Redirect(...).Abort()` or an `AbortableResponse` (a bare
   `Request().Abort()` answers 400).
 - Private files and other sensitive things: unknown and forbidden both answer 404.
