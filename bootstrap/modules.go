@@ -3,6 +3,7 @@ package bootstrap
 import (
 	activitylog "goravel/app-modules/activity-log"
 	adminlayout "goravel/app-modules/admin-layout"
+	aiservice "goravel/app-modules/ai-service"
 	auth "goravel/app-modules/auth"
 	media "goravel/app-modules/media"
 	pdf "goravel/app-modules/pdf"
@@ -22,6 +23,7 @@ func Modules() []modular.Module {
 		&activitylog.Module{},
 		&media.Module{},
 		&pdf.Module{},
+		&aiservice.Module{},
 		// modules-inject (do not remove)
 	}
 }

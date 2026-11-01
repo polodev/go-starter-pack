@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"github.com/goravel/anthropic"
 	"github.com/goravel/framework/ai"
 	"github.com/goravel/framework/auth"
 	"github.com/goravel/framework/cache"
@@ -23,6 +24,7 @@ import (
 	"github.com/goravel/framework/translation"
 	"github.com/goravel/framework/validation"
 	"github.com/goravel/framework/view"
+	"github.com/goravel/gemini"
 	"github.com/goravel/gin"
 	"github.com/goravel/minio"
 	"github.com/goravel/mysql"
@@ -58,5 +60,7 @@ func Providers() []foundation.ServiceProvider {
 		&testing.ServiceProvider{},
 		&mysql.ServiceProvider{},
 		&minio.ServiceProvider{},
+		&anthropic.ServiceProvider{},
+		&gemini.ServiceProvider{},
 	}
 }
