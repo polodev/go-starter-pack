@@ -1,0 +1,29 @@
+{{ define "pdf::invoice" }}<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{{ .invoice.Number }}</title>
+<style>
+  @page { size: A4; margin: 18mm; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #1e293b; font-size: 12px; }
+  h1 { color: #1A3C5E; margin: 0; font-size: 26px; }
+  .top { display: flex; justify-content: space-between; margin-bottom: 28px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+  th { text-align: left; background: #F5F7FA; padding: 8px; border-bottom: 2px solid #1A3C5E; }
+  td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
+  .number { text-align: right; }
+  .total td { font-weight: bold; font-size: 14px; border-top: 2px solid #1A3C5E; }
+  .muted { color: #64748b; }
+</style></head>
+<body>
+  <div class="top">
+    <div><h1>Invoice</h1><p class="muted">{{ .invoice.Number }}</p></div>
+    <div style="text-align: right;"><strong>{{ .invoice.Seller }}</strong><br>
+      <span class="muted">Date: {{ .invoice.Date.Format "2 Jan 2006" }}<br>Due: {{ .invoice.Due.Format "2 Jan 2006" }}</span></div>
+  </div>
+  <p>Bill to: <strong>{{ .invoice.Customer }}</strong></p>
+  <table>
+    <thead><tr><th>Description</th><th class="number">Quantity</th><th class="number">Unit price</th><th class="number">Total</th></tr></thead>
+    <tbody>
+      {{ range .invoice.Lines }}<tr><td>{{ .Description }}</td><td class="number">{{ .Quantity }}</td><td class="number">{{ .UnitPrice }}</td><td class="number">{{ .Total }}</td></tr>{{ end }}
+      <tr class="total"><td colspan="3">Amount due ({{ .invoice.Currency }})</td><td class="number">{{ .invoice.Total }}</td></tr>
+    </tbody>
+  </table>
+</body></html>{{ end }}

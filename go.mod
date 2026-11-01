@@ -3,6 +3,8 @@ module goravel
 go 1.25.0
 
 require (
+	github.com/chromedp/cdproto v0.157.8
+	github.com/chromedp/chromedp v0.21.0
 	github.com/gin-gonic/gin v1.12.0
 	github.com/google/uuid v1.6.0
 	github.com/goravel/framework v1.18.0
@@ -53,6 +55,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/gin-contrib/timeout v1.2.1 // indirect
+	github.com/go-json-experiment/json v0.0.0-20260213210345-44df1a37e875 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect

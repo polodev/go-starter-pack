@@ -1,0 +1,56 @@
+package pdf
+
+import (
+	"os"
+	"path/filepath"
+	"strconv"
+
+	"github.com/goravel/framework/contracts/console"
+	"github.com/goravel/framework/contracts/console/command"
+	"github.com/goravel/framework/contracts/mail"
+
+	"goravel/app/facades"
+)
+
+// SampleInvoiceCommand is `pdf:sample-invoice --output=storage/app/invoice.pdf [--email=you@example.com]`:
+// renders the example invoice with Chrome and, with --email, sends it as an attachment through Goravel's mail.
+type SampleInvoiceCommand struct{}
+
+func (r *SampleInvoiceCommand) Signature() string { return "pdf:sample-invoice" }
+func (r *SampleInvoiceCommand) Description() string {
+	return "Render the example invoice to PDF (and email it with --email)"
+}
+func (r *SampleInvoiceCommand) Extend() command.Extend {
+	return command.Extend{Category: "pdf", Flags: []command.Flag{
+		&command.StringFlag{Name: "output", Value: "storage/app/invoice.pdf", Usage: "where to write the PDF"},
+		&command.StringFlag{Name: "email", Usage: "send it to this address"},
+	}}
+}
+
+func (r *SampleInvoiceCommand) Handle(ctx console.Context) error {
+	invoice := SampleInvoice("Example Customer")
+	document, err := invoice.PDF()
+	if err != nil {
+		ctx.Error("PDF failed: " + err.Error())
+		return err
+	}
+	output := ctx.Option("output")
+	if err := os.MkdirAll(filepath.Dir(output), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(output, document, 0o644); err != nil {
+		return err
+	}
+	ctx.Success("wrote " + output + " (" + strconv.Itoa(len(document)) + " bytes)")
+	if to := ctx.Option("email"); to != "" {
+		err := facades.Mail().To([]string{to}).Subject("Invoice " + invoice.Number).
+			Content(mail.Content{Text: "Your invoice is attached. Amount due: " + invoice.Currency + " " + invoice.Total().String()}).
+			Attach([]string{output}).Send()
+		if err != nil {
+			ctx.Error("mail failed: " + err.Error())
+			return err
+		}
+		ctx.Success("sent to " + to)
+	}
+	return nil
+}
