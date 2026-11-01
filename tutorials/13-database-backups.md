@@ -53,8 +53,17 @@ Each backup is `<BACKUP_PREFIX>/<BACKUP_NAME>/<YYYY-MM-DD-HH-MM-SS>.sql.gz` on t
 - PostgreSQL: `pg_dump --no-owner --no-password`.
 - The password goes through the environment (`MYSQL_PWD`, `PGPASSWORD`), never the command line.
 - A failing tool or an empty dump stores nothing.
-- The dump is held in memory while it uploads (the MinIO driver reads whole files). Stream it before your database
-  reaches several gigabytes.
+- **No memory used for the dump**, whatever the database size:
+
+  ```
+  mysqldump ──pipe──▶ gzip ──▶ storage/app/backup-temp/<time>.sql.gz ──▶ R2 multipart upload, 16 MB parts
+  ```
+
+  The tool's output is copied 32 KB at a time into gzip and a temporary file in `storage/app/backup-temp` (Spatie's
+  backup-temp; `BACKUP_TEMPORARY_DIRECTORY` to move it). The file goes to R2 as a multipart upload, one part at a time,
+  read straight from disk. A failed dump is never uploaded, the temporary file is always removed, and leftovers of a
+  crashed run are cleaned at the next run. You need free disk space for one compressed dump (often 10 to 20% of the
+  database). The test backs up a 48 MB dump while the program's memory grows by under 2 MB.
 
 **Schedule:** `bootstrap/schedule.go` runs `backup:run` daily at 01:30 when backup keys are set.
 

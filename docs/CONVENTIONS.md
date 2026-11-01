@@ -123,6 +123,9 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
   `media.Add(owner, collection, file)` / `AddBytes`, `media.URL(item)`. Files sit at `<MEDIA_PREFIX>/<id>/<file_name>`.
   Never store a path or URL in your own table; ask the media module.
 - `MEDIA_STORAGE=r2` puts public collections in the public bucket and private ones in the private bucket.
+- Backups (`backup:run`, daily at 01:30): the dump streams through gzip into `storage/app/backup-temp` and goes to
+  `r2_backups` as a multipart upload, one 16 MB part at a time, so memory stays flat for any database size. Never read a
+  large file whole: stream it (`io.Copy`, `FPutObject`).
 
 ## Mail, PDF and AI
 

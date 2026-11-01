@@ -1,18 +1,29 @@
 // Package backup dumps the app's database (mysqldump for MySQL/MariaDB, pg_dump for PostgreSQL), gzips it and
 // stores it on the backup disk: <prefix>/<name>/<YYYY-MM-DD-HH-MM-SS>.sql.gz. Like Spatie's backup:run --only-db.
+//
+// Nothing is held in memory: the dump streams through gzip into a temporary file in storage/app/backup-temp (like
+// Spatie's backup-temp), then goes to R2 as a multipart upload one 16 MB part at a time. A database of any size
+// needs only a few megabytes of memory and free disk space for the compressed file.
 package backup
 
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
+
+	supportpath "github.com/goravel/framework/support/path"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"goravel/app/facades"
 )
@@ -54,27 +65,101 @@ func Folder() string {
 	return strings.Trim(config.GetString("backup.prefix"), "/") + "/" + strings.Trim(config.GetString("backup.name"), "/")
 }
 
-// Run dumps the database and stores it on the backup disk. A dump tool that fails or an empty dump stores nothing.
+// Run dumps the database and stores it on the backup disk. A dump tool that fails or an empty dump stores nothing,
+// and the temporary file is always removed.
 func Run(now time.Time) (Stored, error) {
-	dump, err := dumpDatabase(appConnection())
+	tempDir := TemporaryDirectory()
+	if err := os.MkdirAll(tempDir, 0o700); err != nil {
+		return Stored{}, err
+	}
+	removeStaleFiles(tempDir, 24*time.Hour)
+	tempFile := filepath.Join(tempDir, now.UTC().Format("2006-01-02-15-04-05")+"-"+strconv.Itoa(os.Getpid())+".sql.gz")
+	defer os.Remove(tempFile)
+
+	if err := dumpToGzipFile(appConnection(), tempFile); err != nil {
+		return Stored{}, err
+	}
+	info, err := os.Stat(tempFile)
 	if err != nil {
 		return Stored{}, err
 	}
-	var compressed bytes.Buffer
-	writer := gzip.NewWriter(&compressed)
-	if _, err := writer.Write(dump); err != nil {
-		return Stored{}, err
-	}
-	if err := writer.Close(); err != nil {
-		return Stored{}, err
-	}
-
 	diskName := facades.Config().GetString("backup.disk")
 	path := Folder() + "/" + now.UTC().Format("2006-01-02-15-04-05") + ".sql.gz"
-	if err := facades.Storage().Disk(diskName).Put(path, compressed.String()); err != nil {
+	if err := upload(diskName, path, tempFile); err != nil {
 		return Stored{}, fmt.Errorf("upload to %s failed: %w", diskName, err)
 	}
-	return Stored{Disk: diskName, Path: path, Size: int64(compressed.Len())}, nil
+	return Stored{Disk: diskName, Path: path, Size: info.Size()}, nil
+}
+
+// TemporaryDirectory is BACKUP_TEMPORARY_DIRECTORY, default storage/app/backup-temp.
+func TemporaryDirectory() string {
+	if dir := facades.Config().GetString("backup.temporary_directory"); dir != "" {
+		return dir
+	}
+	return supportpath.Storage("app/backup-temp")
+}
+
+// removeStaleFiles deletes what a crashed run left behind.
+func removeStaleFiles(dir string, olderThan time.Duration) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return
+	}
+	for _, entry := range entries {
+		if info, err := entry.Info(); err == nil && !entry.IsDir() && time.Since(info.ModTime()) > olderThan {
+			_ = os.Remove(filepath.Join(dir, entry.Name()))
+		}
+	}
+}
+
+// upload sends the file to the disk without loading it: R2 and other S3 disks get a multipart upload, one part
+// in memory at a time; a local disk gets a streamed copy.
+func upload(diskName, objectPath, file string) error {
+	key := "filesystems.disks." + diskName + "."
+	config := facades.Config()
+	if config.GetString(key+"driver") == "local" {
+		target := filepath.Join(config.GetString(key+"root"), filepath.FromSlash(objectPath))
+		if err := os.MkdirAll(filepath.Dir(target), 0o700); err != nil {
+			return err
+		}
+		return copyFile(file, target)
+	}
+	client, err := minio.New(config.GetString(key+"endpoint"), &minio.Options{
+		Creds:  credentials.NewStaticV4(config.GetString(key+"key"), config.GetString(key+"secret"), ""),
+		Secure: config.GetBool(key+"ssl", true),
+		Region: config.GetString(key + "region"),
+	})
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Hour)
+	defer cancel()
+	_, err = client.FPutObject(ctx, config.GetString(key+"bucket"), objectPath, file, minio.PutObjectOptions{
+		ContentType: "application/gzip",
+		PartSize:    PartSize,
+		NumThreads:  1, // one part in memory at a time
+	})
+	return err
+}
+
+// PartSize is the size of one upload part (S3 allows at most 10,000 parts: 16 MB parts cover 160 GB).
+const PartSize = 16 << 20
+
+func copyFile(source, target string) error {
+	in, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+	out, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+	if err != nil {
+		return err
+	}
+	if _, err := io.Copy(out, in); err != nil {
+		_ = out.Close()
+		return err
+	}
+	return out.Close()
 }
 
 // List returns the stored backups, oldest first.
@@ -108,8 +193,8 @@ func Read(path string) (string, error) {
 	return string(sql), err
 }
 
-func dumpDatabase(db connection) ([]byte, error) {
-	var command *exec.Cmd
+// dumpCommand builds the dump tool's command for the connection. The password goes in the environment.
+func dumpCommand(db connection) (*exec.Cmd, error) {
 	switch db.driver {
 	case "mysql":
 		binary, err := dumpBinary("mysqldump", "mariadb-dump")
@@ -122,30 +207,73 @@ func dumpDatabase(db connection) ([]byte, error) {
 			// A MySQL 8 client asks a MariaDB server for a statistics table it does not have unless told not to.
 			args = append(args, "--column-statistics=0")
 		}
-		command = exec.Command(binary, append(args, db.database)...)
+		command := exec.Command(binary, append(args, db.database)...)
 		command.Env = append(os.Environ(), "MYSQL_PWD="+db.password)
+		return command, nil
 	case "postgres":
 		binary, err := dumpBinary("pg_dump")
 		if err != nil {
 			return nil, err
 		}
-		command = exec.Command(binary, "--host", db.host, "--port", db.port, "--username", db.username,
+		command := exec.Command(binary, "--host", db.host, "--port", db.port, "--username", db.username,
 			"--no-password", "--no-owner", db.database)
 		command.Env = append(os.Environ(), "PGPASSWORD="+db.password)
+		return command, nil
 	default:
 		return nil, fmt.Errorf("backups support mysql and postgres connections, not %q", db.driver)
 	}
+}
 
-	var stderr bytes.Buffer
-	command.Stderr = &stderr
-	output, err := command.Output()
+// dumpToGzipFile streams the dump tool's output through gzip into target, 32 KB at a time. It fails, and leaves
+// no usable file, when the tool fails or writes nothing.
+func dumpToGzipFile(db connection, target string) error {
+	command, err := dumpCommand(db)
 	if err != nil {
-		return nil, fmt.Errorf("%s failed: %s", command.Path, strings.TrimSpace(stderr.String()))
+		return err
 	}
-	if len(output) == 0 {
-		return nil, errors.New("the dump was empty")
+	stdout, err := command.StdoutPipe()
+	if err != nil {
+		return err
 	}
-	return output, nil
+	var stderr limitedBuffer
+	command.Stderr = &stderr
+	file, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	if err := command.Start(); err != nil {
+		return fmt.Errorf("could not start %s: %w", command.Path, err)
+	}
+	compressor := gzip.NewWriter(file)
+	written, copyErr := io.Copy(compressor, stdout)
+	closeErr := compressor.Close()
+	waitErr := command.Wait()
+	switch {
+	case waitErr != nil:
+		return fmt.Errorf("%s failed: %s", command.Path, strings.TrimSpace(stderr.String()))
+	case copyErr != nil:
+		return copyErr
+	case closeErr != nil:
+		return closeErr
+	case written == 0:
+		return errors.New("the dump was empty")
+	}
+	return file.Sync()
+}
+
+// limitedBuffer keeps the first 8 KB of the tool's error output, enough to say what went wrong.
+type limitedBuffer struct{ bytes.Buffer }
+
+func (b *limitedBuffer) Write(p []byte) (int, error) {
+	if room := 8192 - b.Len(); room > 0 {
+		if len(p) > room {
+			b.Buffer.Write(p[:room])
+		} else {
+			b.Buffer.Write(p)
+		}
+	}
+	return len(p), nil
 }
 
 // dumpBinary is the configured tool, or the first candidate that runs.
