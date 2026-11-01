@@ -1,0 +1,20 @@
+{{ define "auth::profile" }}{{ template "site::header" . }}
+<div class="mx-auto max-w-2xl space-y-6">
+  <h1 class="text-2xl font-bold text-brand-navy dark:text-white" data-testid="page-title">{{ .title }}</h1>
+  {{ if not .account.EmailVerifiedAt }}
+  <div class="rounded border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200" data-testid="email-not-verified-banner">
+    {{ t .lang "auth.profile-not-verified-help" }} <a href="/email/verify" class="underline" data-testid="verify-email-link">{{ t .lang "auth.profile-verify-now" }}</a>
+  </div>
+  {{ end }}
+  <div class="divide-y divide-slate-200 rounded-xl bg-white shadow-sm dark:divide-slate-800 dark:bg-slate-900">
+    <div class="flex justify-between px-6 py-4"><span class="text-slate-500">{{ t .lang "auth.name" }}</span><span data-testid="profile-name">{{ .account.Name }}</span></div>
+    <div class="flex items-center justify-between gap-3 px-6 py-4">
+      <span class="text-slate-500">{{ t .lang "auth.email" }}</span>
+      <span class="flex items-center gap-2"><span data-testid="profile-email">{{ .account.Email }}</span>
+        {{ if .account.EmailVerifiedAt }}<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200" data-testid="email-verified">{{ t .lang "auth.verified" }}</span>
+        {{ else }}<span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800 dark:bg-amber-900 dark:text-amber-200" data-testid="email-not-verified">{{ t .lang "auth.not-verified" }}</span>{{ end }}
+      </span>
+    </div>
+  </div>
+</div>
+{{ template "site::footer" . }}{{ end }}

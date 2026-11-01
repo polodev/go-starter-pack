@@ -1,0 +1,7 @@
+{{ define "auth::verify-notice" }}{{ template "site::header" . }}{{ template "auth::card-start" . }}
+<p class="text-slate-600 dark:text-slate-400" data-testid="verify-notice">{{ tr .lang "auth.verify-body" "email" .email }}</p>
+<form method="post" action="/email/verification-notification" class="mt-6">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <button class="{{ template "auth::button-class" }}" data-testid="resend-verification">{{ t .lang "auth.verify-resend" }}</button>
+</form>
+{{ template "auth::card-end" . }}{{ template "site::footer" . }}{{ end }}

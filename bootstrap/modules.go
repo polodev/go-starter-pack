@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	auth "goravel/app-modules/auth"
 	sitelayout "goravel/app-modules/site-layout"
 	"goravel/app/modular"
 )
@@ -10,6 +11,7 @@ import (
 func Modules() []modular.Module {
 	return []modular.Module{
 		&sitelayout.Module{},
+		&auth.Module{},
 		// modules-inject (do not remove)
 	}
 }

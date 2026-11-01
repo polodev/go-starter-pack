@@ -87,6 +87,11 @@ func T(ctx http.Context, key string, replacements ...string) string {
 	return translate(CurrentLocale(ctx), key, replacements...)
 }
 
+// Translate is T for a given language, outside a request (an email in the visitor's language).
+func Translate(locale, key string, replacements ...string) string {
+	return translate(locale, key, replacements...)
+}
+
 func translate(locale, key string, replacements ...string) string {
 	translator := facades.Lang(context.Background())
 	translator.SetLocale(locale)
@@ -175,6 +180,19 @@ func ViewStatus(ctx http.Context, code int, name string, values map[string]any) 
 		return ctx.Response().Status(http.StatusInternalServerError).String("template %s: %v", name, err)
 	}
 	return ctx.Response().Status(code).Data("text/html; charset=utf-8", page.Bytes())
+}
+
+// Render fills a template outside a request (an email body). data should carry "lang" for {{ t .lang "..." }}.
+func Render(name string, data map[string]any) (string, error) {
+	compiled, err := templates.load()
+	if err != nil {
+		return "", err
+	}
+	var output bytes.Buffer
+	if err := compiled.Template.ExecuteTemplate(&output, name, data); err != nil {
+		return "", err
+	}
+	return output.String(), nil
 }
 
 // SafeNext keeps a redirect target on this site: a path that starts with one "/", else fallback.

@@ -20,7 +20,6 @@ func Boot() contractsfoundation.Application {
 		WithMigrations(Migrations).
 		WithRouting(func() {
 			routes.Web()
-			routes.Api()
 			for _, module := range Modules() {
 				if routable, ok := module.(modular.HasRoutes); ok {
 					routable.Routes()

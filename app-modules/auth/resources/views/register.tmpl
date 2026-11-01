@@ -1,0 +1,23 @@
+{{ define "auth::register" }}{{ template "site::header" . }}{{ template "auth::card-start" . }}
+<form method="post" action="/register" class="space-y-4" data-testid="register-form">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <label class="block text-sm">{{ t .lang "auth.name" }}
+    <input name="name" value="{{ .name }}" required class="{{ template "auth::input-class" }}">
+  </label>
+  {{ with .errors.name }}<p class="text-sm text-brand-coral" data-testid="error-name">{{ . }}</p>{{ end }}
+  <label class="block text-sm">{{ t .lang "auth.email" }}
+    <input type="email" name="email" value="{{ .email }}" required class="{{ template "auth::input-class" }}">
+  </label>
+  {{ with .errors.email }}<p class="text-sm text-brand-coral" data-testid="error-email">{{ . }}</p>{{ end }}
+  <label class="block text-sm">{{ t .lang "auth.password" }}
+    <input type="password" name="password" required minlength="8" class="{{ template "auth::input-class" }}">
+  </label>
+  {{ with .errors.password }}<p class="text-sm text-brand-coral" data-testid="error-password">{{ . }}</p>{{ end }}
+  <label class="block text-sm">{{ t .lang "auth.password-confirmation" }}
+    <input type="password" name="password_confirmation" required class="{{ template "auth::input-class" }}">
+  </label>
+  {{ with .errors.password_confirmation }}<p class="text-sm text-brand-coral" data-testid="error-password-confirmation">{{ . }}</p>{{ end }}
+  <button class="{{ template "auth::button-class" }}" data-testid="register-submit">{{ t .lang "auth.register-button" }}</button>
+</form>
+<p class="mt-4 text-sm"><a href="/login" class="text-brand-navy underline dark:text-brand-amber">{{ t .lang "auth.login-link" }}</a></p>
+{{ template "auth::card-end" . }}{{ template "site::footer" . }}{{ end }}

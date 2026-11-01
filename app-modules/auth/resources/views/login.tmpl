@@ -1,0 +1,18 @@
+{{ define "auth::login" }}{{ template "site::header" . }}{{ template "auth::card-start" . }}
+<form method="post" action="/login" class="space-y-4" data-testid="login-form">
+  <input type="hidden" name="_token" value="{{ .csrf }}">
+  <input type="hidden" name="next" value="{{ .next }}">
+  <label class="block text-sm">{{ t .lang "auth.email" }}
+    <input type="email" name="email" value="{{ .email }}" required autofocus class="{{ template "auth::input-class" }}">
+  </label>
+  {{ with .errors.email }}<p class="text-sm text-brand-coral" data-testid="error-email">{{ . }}</p>{{ end }}
+  <label class="block text-sm">{{ t .lang "auth.password" }}
+    <input type="password" name="password" required class="{{ template "auth::input-class" }}">
+  </label>
+  <button class="{{ template "auth::button-class" }}" data-testid="login-submit">{{ t .lang "auth.login-button" }}</button>
+</form>
+<div class="mt-4 flex justify-between text-sm">
+  <a href="/forgot-password" class="text-brand-navy underline dark:text-brand-amber" data-testid="forgot-link">{{ t .lang "auth.forgot-link" }}</a>
+  <a href="/register" class="text-brand-navy underline dark:text-brand-amber">{{ t .lang "auth.register-link" }}</a>
+</div>
+{{ template "auth::card-end" . }}{{ template "site::footer" . }}{{ end }}

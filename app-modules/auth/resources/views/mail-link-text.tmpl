@@ -1,0 +1,7 @@
+{{ define "auth::mail-link-text" }}{{ .appName }}
+
+{{ if eq .purpose "reset_password" }}{{ t .lang "auth.mail-reset-body" }}{{ else }}{{ t .lang "auth.mail-verify-body" }}{{ end }}
+
+{{ .link }}
+
+{{ tr .lang "auth.mail-expires" "minutes" (printf "%d" .minutes) }}{{ end }}
