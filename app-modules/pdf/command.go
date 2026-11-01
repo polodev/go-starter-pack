@@ -7,18 +7,17 @@ import (
 
 	"github.com/goravel/framework/contracts/console"
 	"github.com/goravel/framework/contracts/console/command"
-	"github.com/goravel/framework/contracts/mail"
 
 	"goravel/app/facades"
 )
 
-// SampleInvoiceCommand is `pdf:sample-invoice --output=storage/app/invoice.pdf [--email=you@example.com]`:
-// renders the example invoice with Chrome and, with --email, sends it as an attachment through Goravel's mail.
+// SampleInvoiceCommand is `pdf:sample-invoice --output=storage/app/invoice.pdf`, which writes the example invoice,
+// or `pdf:sample-invoice --email=you@example.com`, which mails it as an attachment (Invoice.Email).
 type SampleInvoiceCommand struct{}
 
 func (r *SampleInvoiceCommand) Signature() string { return "pdf:sample-invoice" }
 func (r *SampleInvoiceCommand) Description() string {
-	return "Render the example invoice to PDF (and email it with --email)"
+	return "Render the example invoice to a PDF file, or email it with --email"
 }
 func (r *SampleInvoiceCommand) Extend() command.Extend {
 	return command.Extend{Category: "pdf", Flags: []command.Flag{
@@ -28,8 +27,16 @@ func (r *SampleInvoiceCommand) Extend() command.Extend {
 }
 
 func (r *SampleInvoiceCommand) Handle(ctx console.Context) error {
-	invoice := SampleInvoice("Example Customer")
-	document, err := invoice.PDF()
+	if to := ctx.Option("email"); to != "" {
+		invoice := SampleInvoice(to)
+		if err := invoice.Email(to); err != nil {
+			ctx.Error("sending the invoice failed: " + err.Error())
+			return err
+		}
+		ctx.Success("sent " + invoice.Number + " to " + to + " through " + facades.Config().GetString("mail.host"))
+		return nil
+	}
+	document, err := SampleInvoice("Example Customer").PDF()
 	if err != nil {
 		ctx.Error("PDF failed: " + err.Error())
 		return err
@@ -42,15 +49,5 @@ func (r *SampleInvoiceCommand) Handle(ctx console.Context) error {
 		return err
 	}
 	ctx.Success("wrote " + output + " (" + strconv.Itoa(len(document)) + " bytes)")
-	if to := ctx.Option("email"); to != "" {
-		err := facades.Mail().To([]string{to}).Subject("Invoice " + invoice.Number).
-			Content(mail.Content{Text: "Your invoice is attached. Amount due: " + invoice.Currency + " " + invoice.Total().String()}).
-			Attach([]string{output}).Send()
-		if err != nil {
-			ctx.Error("mail failed: " + err.Error())
-			return err
-		}
-		ctx.Success("sent to " + to)
-	}
 	return nil
 }

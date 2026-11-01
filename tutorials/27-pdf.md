@@ -55,7 +55,10 @@ Chrome prints the page like "Save as PDF": page size and margins come from CSS:
 
 - Templates: write the document as a template (`pdf::invoice`) and render it with `web.Render`.
 - Money: keep it in minor units (`pdf.Money(4500000)` prints `45,000.00`), never floats.
-- Try it: `go run . artisan pdf:sample-invoice --output=storage/app/invoice.pdf --email=you@example.com`.
+- Try it: `go run . artisan pdf:sample-invoice --output=storage/app/invoice.pdf`.
+- Mail it: `invoice.Email(to)` renders the PDF first, then sends an HTML and text mail with the PDF attached as
+  `<invoice number>.pdf`. Try `go run . artisan pdf:sample-invoice --email=you@example.com`, which goes through
+  `MAIL_HOST`; put `MAIL_MAILER=ses` in front of the command to really send through Amazon SES.
 - Chrome must be installed on the server (`apt install chromium`); set `PDF_CHROME_PATH` if it is not found.
 - To keep a generated PDF, store it with `media.AddBytes(owner, "invoices", "invoice.pdf", "application/pdf", document)`.
 
