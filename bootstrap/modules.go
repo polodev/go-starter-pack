@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	activitylog "goravel/app-modules/activity-log"
 	adminlayout "goravel/app-modules/admin-layout"
 	auth "goravel/app-modules/auth"
 	rolepermission "goravel/app-modules/role-permission"
@@ -16,6 +17,7 @@ func Modules() []modular.Module {
 		&auth.Module{},
 		&rolepermission.Module{},
 		&adminlayout.Module{},
+		&activitylog.Module{},
 		// modules-inject (do not remove)
 	}
 }

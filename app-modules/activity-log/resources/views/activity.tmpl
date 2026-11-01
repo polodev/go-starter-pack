@@ -1,0 +1,62 @@
+{{ define "activity-log::index" }}{{ template "admin::header" . }}
+<form method="get" class="mb-4 flex flex-wrap gap-2 text-sm" data-testid="filters">
+  {{ $log := .filters.log }}
+  <select name="log" class="rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800"><option value="">All logs</option>{{ range .logNames }}<option value="{{ . }}" {{ if eq . $log }}selected{{ end }}>{{ . }}</option>{{ end }}</select>
+  <input name="event" value="{{ .filters.event }}" placeholder="Event" class="w-28 rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+  <input name="causer" value="{{ .filters.causer }}" placeholder="Causer id" class="w-24 rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+  <input name="q" value="{{ .filters.q }}" placeholder="Search description" class="w-56 rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+  <button class="rounded bg-brand-navy px-3 py-1.5 text-white">Filter</button>
+</form>
+{{ template "admin::card-start" . }}
+<table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">When</th><th class="px-4 py-2">Log</th><th class="px-4 py-2">Event</th><th class="px-4 py-2">Description</th><th class="px-4 py-2">Subject</th><th class="px-4 py-2">Causer</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+  {{ range .entries }}
+  <tr data-testid="activity-row">
+    <td class="px-4 py-2"><a href="/admin/activity-logs/{{ .ID }}" class="underline" data-testid="id-link">{{ .ID }}</a></td>
+    <td class="px-4 py-2 whitespace-nowrap">{{ .CreatedAt }}</td>
+    <td class="px-4 py-2">{{ with .LogName }}{{ . }}{{ end }}</td>
+    <td class="px-4 py-2">{{ with .Event }}{{ . }}{{ end }}</td>
+    <td class="px-4 py-2">{{ .Description }}</td>
+    <td class="px-4 py-2">{{ with .SubjectType }}{{ . }}{{ end }} {{ with .SubjectID }}#{{ . }}{{ end }}</td>
+    <td class="px-4 py-2">{{ with .CauserID }}user #{{ . }}{{ end }}</td>
+    <td class="px-4 py-2 text-right"><a href="/admin/activity-logs/{{ .ID }}" class="underline">Show</a></td>
+  </tr>
+  {{ else }}<tr><td colspan="8" class="px-4 py-6 text-center text-slate-500">No entries.</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ template "admin::card-end" . }}
+<div class="mt-3 flex items-center gap-3 text-sm text-slate-500">
+  <span>{{ .total }} entr(y/ies)</span>
+  {{ if gt .prev 0 }}<a href="?log={{ .filters.log }}&event={{ .filters.event }}&causer={{ .filters.causer }}&q={{ .filters.q }}&page={{ .prev }}" class="underline">Previous</a>{{ end }}
+  {{ if .next }}<a href="?log={{ .filters.log }}&event={{ .filters.event }}&causer={{ .filters.causer }}&q={{ .filters.q }}&page={{ .next }}" class="underline">Next</a>{{ end }}
+</div>
+{{ if call .can "activity_logs.manage" }}
+<form method="post" action="/admin/activity-logs/clean" class="mt-4"><input type="hidden" name="_token" value="{{ .csrf }}">
+  <button class="rounded border border-slate-300 px-3 py-1.5 text-sm dark:border-slate-700" data-testid="clean-button">Remove old entries</button></form>
+{{ end }}
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "activity-log::show" }}{{ template "admin::header" . }}
+{{ template "admin::card-start" . }}
+<dl class="divide-y divide-slate-200 dark:divide-slate-800">
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">When</dt><dd>{{ .entry.CreatedAt }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Description</dt><dd data-testid="show-description">{{ .entry.Description }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Log / event</dt><dd>{{ with .entry.LogName }}{{ . }}{{ end }} / {{ with .entry.Event }}{{ . }}{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Subject</dt><dd>{{ with .entry.SubjectType }}{{ . }}{{ end }} {{ with .entry.SubjectID }}#{{ . }}{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Causer</dt><dd>{{ with .entry.CauserID }}<a href="/admin/users/{{ . }}" class="underline">user #{{ . }}</a>{{ end }}</dd></div>
+</dl>
+{{ template "admin::card-end" . }}
+{{ if .changes }}
+<h2 class="mb-2 mt-6 font-semibold">Changes</h2>
+{{ template "admin::card-start" . }}<table class="w-full text-left" data-testid="changes">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">Field</th><th class="px-4 py-2">Before</th><th class="px-4 py-2">After</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">{{ range .changes }}<tr><td class="px-4 py-2">{{ .Field }}</td><td class="px-4 py-2 text-red-700 dark:text-red-300">{{ .Old }}</td><td class="px-4 py-2 text-emerald-700 dark:text-emerald-300">{{ .New }}</td></tr>{{ end }}</tbody>
+</table>{{ template "admin::card-end" . }}
+{{ end }}
+{{ if .properties }}<h2 class="mb-2 mt-6 font-semibold">Properties</h2><pre class="overflow-x-auto rounded-xl bg-slate-900 p-4 text-xs text-slate-100">{{ .properties }}</pre>{{ end }}
+{{ if call .can "activity_logs.manage" }}
+<form method="post" action="/admin/activity-logs/{{ .entry.ID }}/delete" class="mt-6"><input type="hidden" name="_token" value="{{ .csrf }}">
+  <button class="rounded bg-brand-coral px-4 py-2 text-white" data-testid="delete-button">Delete entry</button></form>
+{{ end }}
+{{ template "admin::footer" . }}{{ end }}
