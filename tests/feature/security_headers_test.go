@@ -74,9 +74,11 @@ var (
 	inlineScript       = regexp.MustCompile(`<script(\s[^>]*)?>\s*[^<\s]`)
 	inlineEventHandler = regexp.MustCompile(`\son[a-z]+\s*=`)
 	scriptWithoutSrc   = regexp.MustCompile(`<script(?:\s+(?:type|nonce)="[^"]*")*\s*>`)
+	inlineStyle        = regexp.MustCompile(`\sstyle\s*=|<style[\s>]`)
 )
 
-// The policy allows scripts from this site only, so an inline script or onclick would silently stop working.
+// The policy allows scripts and styles from this site only, so an inline script, onclick or style="..." would
+// silently stop working.
 func (s *SecurityHeadersTestSuite) TestNoPageHasInlineScriptsOrInlineEventHandlers() {
 	user, _, err := auth.CreateUser("Developer", "developer@example.com", "secret-password")
 	s.Require().NoError(err)
@@ -86,7 +88,7 @@ func (s *SecurityHeadersTestSuite) TestNoPageHasInlineScriptsOrInlineEventHandle
 	s.Require().NoError(rolepermission.AssignRole(user.ID, "developer"))
 
 	guest := newBrowser(s.T(), &s.TestCase)
-	pages := []string{"/", "/?lang=bn", "/login", "/register", "/forgot-password"}
+	pages := []string{"/", "/?lang=bn", "/login", "/register", "/forgot-password", "/contact"}
 	for _, uri := range pages {
 		s.assertNoInlineCode(guest, uri)
 	}
@@ -96,7 +98,8 @@ func (s *SecurityHeadersTestSuite) TestNoPageHasInlineScriptsOrInlineEventHandle
 	response, _ := staff.post("/login", url.Values{"email": {"developer@example.com"}, "password": {"secret-password"}})
 	response.AssertStatus(303)
 	for _, uri := range []string{"/", "/account/profile", "/account/avatar", "/admin", "/admin/users", "/admin/users/" + strconv.Itoa(int(user.ID)) + "/edit", "/admin/role-permissions", "/admin/role-permissions/matrix", "/admin/activity-logs", "/admin/media", "/admin/pages", "/admin/pages/create", "/admin/ai-api-logs",
-		"/admin/queue-watcher", "/admin/queue-watcher/jobs", "/admin/queue-watcher/pending", "/admin/queue-watcher/failed"} {
+		"/admin/queue-watcher", "/admin/queue-watcher/jobs", "/admin/queue-watcher/pending", "/admin/queue-watcher/failed",
+		"/admin/contacts"} {
 		s.assertNoInlineCode(staff, uri)
 	}
 }
@@ -107,5 +110,6 @@ func (s *SecurityHeadersTestSuite) assertNoInlineCode(b *browser, uri string) {
 	s.NotRegexp(inlineScript, body, "%s has an inline script", uri)
 	s.NotRegexp(scriptWithoutSrc, body, "%s has a script without src", uri)
 	s.NotRegexp(inlineEventHandler, body, "%s has an inline event handler", uri)
+	s.NotRegexp(inlineStyle, body, "%s has an inline style (the policy allows styles from this site only)", uri)
 	s.Contains(body, `<script src="/public/js/theme.js"></script>`, uri)
 }

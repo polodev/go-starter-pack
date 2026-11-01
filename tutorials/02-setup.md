@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 2 of 31** | [Index](00-index.md) | [Previous: 1 Introduction](01-introduction.md) | [Next: 3 Go essentials for Laravel developers](03-go-essentials.md)
+**Tutorial 2 of 32** | [Index](00-index.md) | [Previous: 1 Introduction](01-introduction.md) | [Next: 3 Go essentials for Laravel developers](03-go-essentials.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -35,6 +35,7 @@
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
+32. [Contact form](32-contact-form.md)  
 
 </details>
 <!-- nav:end -->

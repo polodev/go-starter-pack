@@ -14,6 +14,7 @@
     <a href="/" class="text-lg font-bold text-brand-navy dark:text-white" data-testid="site-home-link">{{ .appName }}</a>
     <div class="flex flex-wrap items-center gap-4 text-sm">
       <a href="/pages/about" class="hover:text-brand-amber">{{ t .lang "site-layout.nav-about" }}</a>
+      <a href="/contact" class="hover:text-brand-amber" data-testid="nav-contact">{{ t .lang "site-layout.nav-contact" }}</a>
       {{ if .user }}
         <a href="/account/profile" class="flex items-center gap-2 hover:text-brand-amber" data-testid="nav-account">{{ if .avatarURL }}<img src="{{ .avatarURL }}" alt="" class="h-6 w-6 rounded-full object-cover">{{ end }}{{ .user.Name }}</a>
         {{ if .canAdmin }}<a href="/admin" class="hover:text-brand-amber" data-testid="nav-admin">{{ t .lang "site-layout.nav-admin" }}</a>{{ end }}

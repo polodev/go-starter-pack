@@ -5,6 +5,7 @@ import (
 	adminlayout "goravel/app-modules/admin-layout"
 	aiservice "goravel/app-modules/ai-service"
 	auth "goravel/app-modules/auth"
+	contact "goravel/app-modules/contact"
 	media "goravel/app-modules/media"
 	pages "goravel/app-modules/pages"
 	pdf "goravel/app-modules/pdf"
@@ -28,6 +29,7 @@ func Modules() []modular.Module {
 		&aiservice.Module{},
 		&pages.Module{},
 		&queuewatcher.Module{},
+		&contact.Module{},
 		// modules-inject (do not remove)
 	}
 }

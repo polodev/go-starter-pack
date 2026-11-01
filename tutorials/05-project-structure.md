@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 5 of 31** | [Index](00-index.md) | [Previous: 4 Go tooling jargon](04-go-tooling.md) | [Next: 6 Routes, controllers and views](06-routes-controllers-views.md)
+**Tutorial 5 of 32** | [Index](00-index.md) | [Previous: 4 Go tooling jargon](04-go-tooling.md) | [Next: 6 Routes, controllers and views](06-routes-controllers-views.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -35,6 +35,7 @@
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
+32. [Contact form](32-contact-form.md)  
 
 </details>
 <!-- nav:end -->

@@ -1,0 +1,97 @@
+{{ define "contact::input-class" }}mt-1 w-full rounded border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-brand-amber focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white{{ end }}
+
+{{ define "contact::page" }}{{ template "site::header" . }}
+<div class="mx-auto max-w-xl rounded-xl bg-white p-8 shadow-sm dark:bg-slate-900">
+  <h1 class="mb-2 text-2xl font-bold text-brand-navy dark:text-white" data-testid="page-title">{{ .title }}</h1>
+  <p class="mb-6 text-sm text-slate-600 dark:text-slate-400">{{ t .lang "contact.intro" }}</p>
+  {{ if .sent }}<p class="mb-6 rounded border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200" role="status" data-testid="contact-success">{{ t .lang "contact.sent" }}</p>{{ end }}
+  {{ with .failure }}<p class="mb-6 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200" role="alert" data-testid="contact-failure">{{ . }}</p>{{ end }}
+  <form method="post" action="/contact" class="space-y-4" data-testid="contact-form">
+    <input type="hidden" name="_token" value="{{ .csrf }}">
+    {{/* Honeypot: off-screen for people, tempting for bots. Anything typed here means a script sent the form. */}}
+    <div class="absolute -left-[10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+      <label>Website <input type="text" name="website" value="" tabindex="-1" autocomplete="off" data-testid="contact-honeypot"></label>
+    </div>
+    <label class="block text-sm">{{ t .lang "contact.name" }}
+      <input name="name" value="{{ .values.name }}" maxlength="80" required autocomplete="name" class="{{ template "contact::input-class" }}">
+    </label>
+    {{ with .errors.name }}<p class="text-sm text-brand-coral" data-testid="error-name">{{ . }}</p>{{ end }}
+    <label class="block text-sm">{{ t .lang "contact.email" }}
+      <input type="email" name="email" value="{{ .values.email }}" maxlength="254" required autocomplete="email" class="{{ template "contact::input-class" }}">
+    </label>
+    {{ with .errors.email }}<p class="text-sm text-brand-coral" data-testid="error-email">{{ . }}</p>{{ end }}
+    <label class="block text-sm">{{ t .lang "contact.subject" }}
+      <input name="subject" value="{{ .values.subject }}" maxlength="150" class="{{ template "contact::input-class" }}">
+    </label>
+    {{ with .errors.subject }}<p class="text-sm text-brand-coral" data-testid="error-subject">{{ . }}</p>{{ end }}
+    <label class="block text-sm">{{ t .lang "contact.message" }}
+      <textarea name="message" rows="6" maxlength="5000" required class="{{ template "contact::input-class" }}">{{ .values.message }}</textarea>
+    </label>
+    {{ with .errors.message }}<p class="text-sm text-brand-coral" data-testid="error-message">{{ . }}</p>{{ end }}
+    <button class="rounded bg-brand-navy px-5 py-2 font-semibold text-white hover:bg-brand-amber" data-testid="contact-submit">{{ t .lang "contact.send" }}</button>
+  </form>
+</div>
+{{ template "site::footer" . }}{{ end }}
+
+{{ define "contact::status" }}<span class="rounded px-2 py-0.5 text-xs {{ if eq . "new" }}bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200{{ else }}bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200{{ end }}" data-testid="contact-status">{{ . }}</span>{{ end }}
+
+{{ define "contact::admin-index" }}{{ template "admin::header" . }}
+<p class="mb-4 text-sm text-slate-500" data-testid="waiting">{{ .waiting }} new message(s) waiting for an answer.</p>
+<form method="get" class="mb-4 flex flex-wrap gap-2 text-sm" data-testid="filters">
+  {{ $status := .filters.status }}
+  <select name="status" class="rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800"><option value="">All</option>{{ range .statuses }}<option value="{{ . }}" {{ if eq . $status }}selected{{ end }}>{{ . }}</option>{{ end }}</select>
+  <input name="q" value="{{ .filters.q }}" placeholder="Name, email or subject" class="w-64 rounded border border-slate-300 px-2 py-1.5 dark:border-slate-700 dark:bg-slate-800">
+  <button class="rounded bg-brand-navy px-3 py-1.5 text-white">Filter</button>
+</form>
+{{ template "admin::card-start" . }}
+<table class="w-full text-left">
+  <thead class="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-800"><tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Received</th><th class="px-4 py-2">From</th><th class="px-4 py-2">Subject</th><th class="px-4 py-2">Language</th><th class="px-4 py-2">Status</th><th class="px-4 py-2 text-right">Actions</th></tr></thead>
+  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+  {{ range .messages }}
+  <tr data-testid="contact-row">
+    <td class="px-4 py-2"><a href="/admin/contacts/{{ .ID }}" class="underline" data-testid="id-link">{{ .ID }}</a></td>
+    <td class="px-4 py-2 whitespace-nowrap">{{ .CreatedAt }}</td>
+    <td class="px-4 py-2">{{ .Name }} <span class="text-slate-500">&lt;{{ .Email }}&gt;</span></td>
+    <td class="px-4 py-2">{{ .SubjectText }}</td>
+    <td class="px-4 py-2">{{ .Locale }}</td>
+    <td class="px-4 py-2">{{ template "contact::status" .Status }}</td>
+    <td class="px-4 py-2 text-right"><a href="/admin/contacts/{{ .ID }}" class="underline">Show</a></td>
+  </tr>
+  {{ else }}<tr><td colspan="7" class="px-4 py-6 text-center text-slate-500">No messages.</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ template "admin::card-end" . }}
+<div class="mt-3 flex items-center gap-3 text-sm text-slate-500">
+  <span>{{ .total }} message(s)</span>
+  {{ if gt .prev 0 }}<a href="?status={{ .filters.status }}&q={{ .filters.q }}&page={{ .prev }}" class="underline">Previous</a>{{ end }}
+  {{ if .next }}<a href="?status={{ .filters.status }}&q={{ .filters.q }}&page={{ .next }}" class="underline">Next</a>{{ end }}
+</div>
+{{ template "admin::footer" . }}{{ end }}
+
+{{ define "contact::admin-show" }}{{ template "admin::header" . }}
+{{ template "admin::card-start" . }}
+<dl class="divide-y divide-slate-200 dark:divide-slate-800">
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">From</dt><dd data-testid="show-from">{{ .message.Name }} &lt;{{ .message.Email }}&gt;</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Subject</dt><dd>{{ .message.SubjectText }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Received</dt><dd>{{ .message.CreatedAt }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Language</dt><dd>{{ .message.Locale }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Status</dt><dd>{{ template "contact::status" .message.Status }}{{ with .message.RepliedAt }} <span class="text-slate-500">{{ .Format "2006-01-02 15:04" }}</span>{{ end }}</dd></div>
+  <div class="flex justify-between px-5 py-3"><dt class="text-slate-500">Sent from</dt><dd class="text-xs text-slate-500">{{ with .message.IPAddress }}{{ . }}{{ end }}</dd></div>
+</dl>
+{{ template "admin::card-end" . }}
+<h2 class="mb-2 mt-6 font-semibold">Message</h2>
+<div class="whitespace-pre-wrap rounded-xl border border-slate-200 bg-white p-5 text-sm dark:border-slate-800 dark:bg-slate-900" data-testid="contact-message">{{ .message.Message }}</div>
+<div class="mt-6 flex flex-wrap items-center gap-3">
+  <a href="{{ .replyLink }}" class="rounded border border-slate-300 px-4 py-2 text-sm dark:border-slate-700" data-testid="reply-link">Reply by email</a>
+  {{ if call .can "contacts.manage" }}
+  {{ $current := .message.Status }}
+  <form method="post" action="/admin/contacts/{{ .message.ID }}/status" class="flex items-center gap-2" data-testid="status-form">
+    <input type="hidden" name="_token" value="{{ .csrf }}">
+    <select name="status" class="rounded border border-slate-300 px-2 py-2 text-sm dark:border-slate-700 dark:bg-slate-800">{{ range .statuses }}<option value="{{ . }}" {{ if eq . $current }}selected{{ end }}>{{ . }}</option>{{ end }}</select>
+    <button class="rounded bg-brand-navy px-4 py-2 text-sm text-white" data-testid="status-button">Set status</button>
+  </form>
+  <form method="post" action="/admin/contacts/{{ .message.ID }}/delete"><input type="hidden" name="_token" value="{{ .csrf }}">
+    <button class="rounded bg-brand-coral px-4 py-2 text-sm text-white" data-testid="delete-button">Delete</button></form>
+  {{ end }}
+</div>
+{{ template "admin::footer" . }}{{ end }}

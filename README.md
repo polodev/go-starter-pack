@@ -18,6 +18,7 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
 - [x] **Activity log** (Spatie laravel-activitylog compatible) with admin screens
 - [x] **Media library** (Spatie laravel-medialibrary compatible): collections, avatars, private files, Cloudflare R2
 - [x] **Bilingual pages** with per-part English fallback and cleaned staff HTML
+- [x] **Contact form** with a honeypot, a rate limit and server validation, and an admin inbox
 - [x] **Mail** through Goravel's mail, queued; Amazon SES through its SMTP interface
 - [x] **PDF** from HTML and CSS with headless Chrome
 - [x] **AI service** on Goravel's AI SDK (Claude, OpenAI, Gemini) with AI API logs and cost estimates
@@ -41,6 +42,7 @@ internachi/modular. The sister project of the Rust starter pack, for people who 
 | `ai-service` | `aiservice.Chat` / `JSON`, AI API logs |
 | `pages` | bilingual website pages |
 | `queue-watcher` | queue monitor: history of every job run, pending and failed jobs, retry and delete |
+| `contact` | public contact form (honeypot, rate limit, both languages) and the admin inbox |
 
 App-wide pieces outside the modules: `app/modular` (the module system), `app/web` (web middleware group, page data,
 templates), `app/activity` (activity writer), `app/storage` (R2 driver), `app/services/backup`, `app/support`.

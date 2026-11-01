@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 12 of 31** | [Index](00-index.md) | [Previous: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md) | [Next: 13 Database backups](13-database-backups.md)
+**Tutorial 12 of 32** | [Index](00-index.md) | [Previous: 11 Console commands and the scheduler](11-console-commands-and-scheduler.md) | [Next: 13 Database backups](13-database-backups.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -35,6 +35,7 @@
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
+32. [Contact form](32-contact-form.md)  
 
 </details>
 <!-- nav:end -->

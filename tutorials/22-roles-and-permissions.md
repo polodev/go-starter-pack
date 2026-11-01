@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 22 of 31** | [Index](00-index.md) | [Previous: 21 Web login, verification and password reset](21-web-login.md) | [Next: 23 The admin area](23-admin-area.md)
+**Tutorial 22 of 32** | [Index](00-index.md) | [Previous: 21 Web login, verification and password reset](21-web-login.md) | [Next: 23 The admin area](23-admin-area.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -35,6 +35,7 @@
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
+32. [Contact form](32-contact-form.md)  
 
 </details>
 <!-- nav:end -->
@@ -53,8 +54,8 @@ var Permissions = map[string]map[string]string{
 	...
 }
 newEmployee         = []string{"dashboard.view"}
-businessDevelopment = with(newEmployee, "users.view", "pages.view", "media.view")
-employee            = with(businessDevelopment, "pages.manage", "activity_logs.view", "ai_api_logs.view", "queue.view")
+businessDevelopment = with(newEmployee, "users.view", "pages.view", "media.view", "contacts.view")
+employee            = with(businessDevelopment, "pages.manage", "contacts.manage", "activity_logs.view", "ai_api_logs.view", "queue.view")
 admin               = with(employee, "users.manage", "media.manage", ..., "queue.*")
 developer           = with(admin, "roles.*")
 ```

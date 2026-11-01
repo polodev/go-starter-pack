@@ -35,6 +35,10 @@ var Permissions = map[string]map[string]string{
 		"ai_api_logs.view":   "View AI API logs",
 		"ai_api_logs.manage": "Delete AI API logs",
 	},
+	"contacts": {
+		"contacts.view":   "Read messages from the contact form",
+		"contacts.manage": "Change the status of and delete contact messages",
+	},
 	"queue": {
 		"queue.view":   "View jobs, failed jobs and the schedule",
 		"queue.manage": "Retry and delete jobs",
@@ -56,8 +60,8 @@ func with(base []string, more ...string) []string {
 
 var (
 	newEmployee         = []string{"dashboard.view"}
-	businessDevelopment = with(newEmployee, "users.view", "pages.view", "media.view")
-	employee            = with(businessDevelopment, "pages.manage", "activity_logs.view", "ai_api_logs.view", "queue.view")
+	businessDevelopment = with(newEmployee, "users.view", "pages.view", "media.view", "contacts.view")
+	employee            = with(businessDevelopment, "pages.manage", "contacts.manage", "activity_logs.view", "ai_api_logs.view", "queue.view")
 	admin               = with(employee, "dashboard.manage", "users.manage", "media.manage", "activity_logs.manage",
 		"ai_api_logs.manage", "queue.*")
 	developer = with(admin, "roles.*")
@@ -66,8 +70,8 @@ var (
 // Roles in ascending authority, like the Laravel apps: only a developer may assign roles or run the sync.
 var Roles = []RoleDefinition{
 	{"new_employee", "New Employee", 1, "Admin overview only.", newEmployee},
-	{"business_development", "Business Development", 2, "Looks at users, pages and files.", businessDevelopment},
-	{"employee", "Employee", 3, "Edits pages and reads the operational logs.", employee},
+	{"business_development", "Business Development", 2, "Looks at users, pages, files and contact messages.", businessDevelopment},
+	{"employee", "Employee", 3, "Edits pages, answers contact messages and reads the operational logs.", employee},
 	{"admin", "Admin", 4, "Manages the platform, but cannot assign roles.", admin},
 	{"developer", "Developer", 5, "Everything, including role assignment and the sync.", developer},
 }

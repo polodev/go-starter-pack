@@ -1,5 +1,5 @@
 <!-- nav:start -->
-**Tutorial 1 of 31** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
+**Tutorial 1 of 32** | [Index](00-index.md) | Previous: none | [Next: 2 Setup](02-setup.md)
 
 <details><summary>Jump to any tutorial</summary>
 
@@ -35,6 +35,7 @@
 29. [Bilingual pages](29-bilingual-pages.md)  
 30. [Security headers](30-security-headers.md)  
 31. [Queue monitor](31-queue-monitor.md)  
+32. [Contact form](32-contact-form.md)  
 
 </details>
 <!-- nav:end -->
@@ -64,6 +65,7 @@ language that is quick to learn. Goravel keeps the Laravel vocabulary, so you th
 | PDF from HTML | Browsershot / dompdf | [27](27-pdf.md) |
 | AI service and AI API logs | Laravel AI SDK / Prism | [28](28-ai-service.md) |
 | Bilingual pages | a CMS pages table | [29](29-bilingual-pages.md) |
+| Contact form and inbox | a contact form with honeypot and throttle | [32](32-contact-form.md) |
 | Database queue with `failed_jobs` | `QUEUE_CONNECTION=database` | [10](10-queues-and-jobs.md) |
 | Queue monitor: job history, pending and failed jobs, retry | Horizon dashboard, jobs monitor | [31](31-queue-monitor.md) |
 | Artisan commands and the scheduler | `make:command`, `routes/console.php` | [11](11-console-commands-and-scheduler.md) |

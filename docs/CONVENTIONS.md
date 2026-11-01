@@ -35,7 +35,7 @@ app-modules/<name>/
 - A module offers routes (`HasRoutes`), migrations, commands, jobs, schedules, seeders, views, admin menu items, and a
   `Boot()` that runs once after everything is registered (`HasBoot`, Laravel's `ServiceProvider::boot`).
 - Dependency direction, no cycles: `site-layout`, `auth` < `role-permission` < `admin-layout` < modules with admin
-  screens (`activity-log`, `media`, `pages`, `ai-service`, `queue-watcher`). Shared writers that low modules need live in `app/`
+  screens (`activity-log`, `media`, `pages`, `ai-service`, `queue-watcher`, `contact`). Shared writers that low modules need live in `app/`
   (`app/activity`), never in a module.
 - App-wide code: `app/modular` (module system), `app/web` (web group, page data, templates, translation helpers),
   `app/activity`, `app/storage`, `app/services/backup`, `app/support`.
@@ -103,7 +103,7 @@ Admin resources: `GET /admin/things` (list), `GET /admin/things/{id}` (show), `G
   a Content-Security-Policy that allows scripts only from this site, `X-Frame-Options: DENY`, `nosniff`, a strict
   referrer policy, and HSTS in production. So **no inline scripts and no `onclick=`**: JavaScript lives in
   `public/js/` and buttons get a `data-*` attribute (see `public/js/theme.js`). A new outside source goes into
-  `SECURITY_CONTENT_SECURITY_POLICY`, never by switching the policy off.
+  `SECURITY_CONTENT_SECURITY_POLICY`, never by switching the policy off. The same goes for `style="..."`: use classes.
 
 ## JSON API
 
@@ -178,5 +178,7 @@ routes, views with `module::` names, translations in both languages, permissions
 routes through `rolepermission.Admin`, `AdminMenu()` entry, ID-first list, show, edit, activity entries, tests for
 list, show, edit, validation, 403 and "nothing changed".
 
-**A new public form:** `_token`, server validation with 422 and kept values, both languages, rate limit if it sends
-mail or checks credentials, tests including the 419 without a token.
+**A new public form:** `_token`, server validation with 422 and kept values, both languages, a honeypot field
+(`website`, hidden with classes; filled means: answer like a success and store nothing), a rate limit through
+`facades.RateLimiter()` (always when anyone can post it, sends mail or checks credentials), tests for success, 422,
+honeypot, 429 and the 419 without a token. `app-modules/contact` is the example.
